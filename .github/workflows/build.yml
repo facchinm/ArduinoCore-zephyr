@@ -8,34 +8,29 @@ jobs:
     container: zephyrprojectrtos/ci:latest
     env:
       CMAKE_PREFIX_PATH: /opt/toolchains
+      PR_NUMBER: ${{ github.event.number }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: ArduinoCore-zephyr
-
       - name: Initialize
-        working-directory: ArduinoCore-zephyr
         run: |
           mkdir build && cd build
-          west init -m https://github.com/arduino/ArduinoCore-zephyr.git
+          west init -m https://github.com/${{ github.repository }}
+          cd modules/lib/ArduinoCore-zephyr/
+          git fetch origin ${{ github.ref }}
+          git checkout ${{ github.ref_name }}
+          cd -
           west update
-          rm -rf modules/lib/ArduinoCore-zephyr/*
-          cp -r ../* modules/lib/ArduinoCore-zephyr || true
-          rm modules/lib/ArduinoCore-zephyr/cores/arduino/api
-          cp -r modules/lib/ArduinoCore-API/api modules/lib/ArduinoCore-zephyr/cores/arduino/api
 
       - name: Build fade
-        working-directory: ArduinoCore-zephyr/build
+        working-directory: build
         run: |
-          west build -p -b arduino_nano_33_ble//sense ../samples/fade
+          west build -p -b arduino_nano_33_ble//sense modules/lib/ArduinoCore-zephyr/samples/fade
 
       - name: Build i2cdemo
-        working-directory: ArduinoCore-zephyr/build
+        working-directory: build
         run: |
-          west build -p -b ek_ra8d1 ../samples/i2cdemo
+          west build -p -b ek_ra8d1 modules/lib/ArduinoCore-zephyr/samples/i2cdemo
 
       - name: Build adc
-        working-directory: ArduinoCore-zephyr/build
+        working-directory: build
         run: |
-          west build -p -b arduino_nano_33_ble//sense ../samples/analog_input
+          west build -p -b arduino_nano_33_ble/nrf52840/sense modules/lib/ArduinoCore-zephyr/samples/analog_input
