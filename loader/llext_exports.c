@@ -255,3 +255,9 @@ FORCE_EXPORT_SYM(__aeabi_dcmpge);
 #if defined (CONFIG_CPP)
 FORCE_EXPORT_SYM(__cxa_pure_virtual);
 #endif
+
+#if defined(CONFIG_BOARD_ARDUINO_PORTENTA_C33)
+EXPORT_SYMBOL(k_msgq_cleanup);
+EXPORT_SYMBOL(stdout);
+EXPORT_SYMBOL(isatty);
+#endif
