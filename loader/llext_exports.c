@@ -60,6 +60,9 @@ EXPORT_SYMBOL(sqrtf);
 EXPORT_SYMBOL(k_sched_lock);
 EXPORT_SYMBOL(k_sched_unlock);
 
+EXPORT_SYMBOL(bin2hex);
+EXPORT_SYMBOL(hex2bin);
+
 #if defined(CONFIG_USB_DEVICE_STACK)
 EXPORT_SYMBOL(usb_enable);
 EXPORT_SYMBOL(usb_disable);
@@ -307,4 +310,8 @@ FORCE_EXPORT_SYM(fs_mkfs);
 #endif
 FORCE_EXPORT_SYM(fs_register);
 FORCE_EXPORT_SYM(fs_unregister);
+#endif
+
+#if defined(CONFIG_CAN)
+#include <zephyr/drivers/can.h>
 #endif
