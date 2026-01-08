@@ -20,8 +20,8 @@ manifest:
 
   projects:
     - name: zephyr
-      remote: arduino
-      revision: zephyr-arduino-v4.2.0
+      remote: facchinm
+      revision: zephyr-arduino-v4.3.0+
       import:
         name-allowlist:
           - cmsis
