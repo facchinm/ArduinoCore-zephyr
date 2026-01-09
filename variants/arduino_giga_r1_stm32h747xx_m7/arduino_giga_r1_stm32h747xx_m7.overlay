@@ -341,6 +341,7 @@
 
 
 &flash0 {
+	bank2-flash-size = <1024>;
 	partitions {
 		/delete-node/ slot0_partition;
 
