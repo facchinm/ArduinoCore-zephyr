@@ -321,7 +321,7 @@
 	chosen {
 		zephyr,camera = &dcmi;
 		zephyr,log-uart = &log_uarts;
-		/* zephyr,console = &board_cdc_acm_uart; */
+		zephyr,console = &usart1;
 	};
 
 	log_uarts: log_uarts {
