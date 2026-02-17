@@ -34,9 +34,10 @@ struct sketch_header_v1 {
 	uint8_t flags;  // @ 0x0e
 } __attribute__((packed));
 
-#define SKETCH_FLAG_DEBUG     0x01
-#define SKETCH_FLAG_LINKED    0x02
-#define SKETCH_FLAG_IMMEDIATE 0x04
+#define SKETCH_FLAG_DEBUG           0x01
+#define SKETCH_FLAG_LINKED          0x02
+#define SKETCH_FLAG_IMMEDIATE       0x04
+#define SKETCH_FLAG_WAIT_FOR_APP    0x08
 
 #define SKETCH_RAM_BUFFER_LEN 131072
 
@@ -179,17 +180,6 @@ static int loader(const struct shell *sh) {
 
 		gpio_pin_configure_dt(&spec, GPIO_INPUT | GPIO_PULL_DOWN);
 		k_sleep(K_MSEC(200));
-		uint8_t *ram_firmware = NULL;
-		uint32_t *ram_start = (uint32_t *)0x20000000;
-		if (!sketch_valid) {
-			ram_firmware = (uint8_t *)malloc(SKETCH_RAM_BUFFER_LEN);
-			if (!ram_firmware) {
-				printk("Failed to allocate RAM for firmware\n");
-				return -ENOMEM;
-			}
-			memset(ram_firmware, 0, SKETCH_RAM_BUFFER_LEN);
-			*ram_start = (uint32_t)&ram_firmware[0];
-		}
 		if (gpio_pin_get_dt(&spec) == 0) {
 			matrixBegin();
 			matrixSetGrayscaleBits(8);
@@ -202,15 +192,13 @@ static int loader(const struct shell *sh) {
 			k_sleep(K_MSEC(10));
 			matrixEnd();
 		}
-		while (!sketch_valid) {
-			__asm__("bkpt");
-			// poll the first bytes, if filled try to use them for booting
-			sketch_hdr = (struct sketch_header_v1 *)(ram_firmware + 7);
-			if (sketch_hdr->ver == 0x1 && sketch_hdr->magic == 0x2341) {
-				// Found valid data, use it for booting
-				base_addr = (uintptr_t)ram_firmware;
-				*ram_start = 0;
-				sketch_valid = true;
+		if (sketch_hdr->flags & SKETCH_FLAG_WAIT_FOR_APP) {
+			// wait for another pin toggle
+			while (gpio_pin_get_dt(&spec) != 0) {
+				k_sleep(K_MSEC(10));
+			}
+			while (gpio_pin_get_dt(&spec) != 1) {
+				k_sleep(K_MSEC(10));
 			}
 		}
 	}

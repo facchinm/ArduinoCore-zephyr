@@ -1,6 +1,5 @@
 menu.debug=Debug
 menu.link_mode=Link mode
-menu.flash_mode=Flash mode
 menu.wait_linux_boot=Startup mode
 
 ##########################################################################################
@@ -638,13 +637,11 @@ unoq.menu.link_mode.static=Static
 unoq.menu.link_mode.static.build.link_mode=static
 unoq.menu.link_mode.static.upload.extension=bin-zsk.bin
 
-unoq.menu.flash_mode.flash=Flash
-unoq.menu.flash_mode.flash.openocd_cfg=flash_sketch.cfg
-unoq.menu.flash_mode.ram=RAM
-unoq.menu.flash_mode.ram.openocd_cfg=flash_sketch_ram.cfg
 unoq.menu.wait_linux_boot.yes=Wait for Linux
 unoq.menu.wait_linux_boot.no=Immediate
 unoq.menu.wait_linux_boot.no.build.boot_mode=immediate
+unoq.menu.wait_linux_boot.app=Wait for App
+unoq.menu.wait_linux_boot.app.build.boot_mode=app
 
 unoq.build.zephyr_target=arduino_uno_q
 unoq.build.zephyr_args=
@@ -655,6 +652,8 @@ unoq.build.mcu=cortex-m33
 unoq.build.fpu=-mfpu=fpv5-sp-d16
 unoq.build.architecture=cortex-m33
 unoq.compiler.zephyr.arch.define=
+
+unoq.openocd_cfg=flash_sketch.cfg
 
 unoq.build.float-abi=-mfloat-abi=hard
 unoq.build.extra_flags=

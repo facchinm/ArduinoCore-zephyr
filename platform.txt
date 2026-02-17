@@ -77,6 +77,7 @@ build.zsk_args.debug=
 build.zsk_args.mode-dynamic=
 build.zsk_args.mode-static=-prelinked
 build.zsk_args.startup-mode-wait=
+build.zsk_args.startup-mode-app=-wait_for_app
 build.zsk_args.startup-mode-immediate=-immediate
 
 # These can be overridden in platform.local.txt
