@@ -656,7 +656,7 @@ unoq.compiler.zephyr.arch.define=
 unoq.openocd_cfg=flash_sketch.cfg
 
 unoq.build.float-abi=-mfloat-abi=hard
-unoq.build.extra_flags=
+unoq.build.extra_flags=-DUNO_Q_SERIAL_RPC=Serial2
 unoq.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
 unoq.build.board=UNO_Q
 unoq.build.zephyr_hals=hal_stm32

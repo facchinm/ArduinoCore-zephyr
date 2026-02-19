@@ -300,7 +300,7 @@
 					<&gpioc 1 0>,
 					<&gpioc 0 0>;
 
-		serials = <&usart1>, <&lpuart1>;
+		serials = <&usart1>, <&usart1>, <&lpuart1>;
 		i2cs = <&i2c2>, <&i2c4>;
 		spis = <&spi2>, <&spi3>;
 		/* PWM mapping for the digital pins  */

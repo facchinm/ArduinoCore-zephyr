@@ -154,4 +154,8 @@ void analogWriteResolution(int bits);
 // Allow namespace-less operations if Arduino.h is included
 using namespace arduino;
 
+#if __has_include(<extravariant.h>)
+#include <extravariant.h>
+#endif
+
 #endif // __cplusplus
