@@ -111,6 +111,11 @@ __attribute__((retain)) const uintptr_t sketch_max_size = DT_REG_SIZE(DT_NODELAB
 #endif
 __attribute__((retain)) const uintptr_t loader_max_size = LOADER_MAX_SIZE;
 
+struct backup_store {
+	uint32_t wait_for_app_magic;
+};
+volatile __stm32_backup_sram_section struct backup_store backup;
+
 static int loader(const struct shell *sh) {
 	const struct flash_area *fa;
 	int rc;
@@ -161,6 +166,8 @@ static int loader(const struct shell *sh) {
 		char buf_loop;
 	};
 
+	backup.wait_for_app_magic = 0;
+
 	uintptr_t bootanimation_addr = DT_REG_ADDR(DT_GPARENT(DT_NODELABEL(bootanimation))) +
 								   DT_REG_ADDR(DT_NODELABEL(bootanimation));
 
@@ -192,13 +199,10 @@ static int loader(const struct shell *sh) {
 			k_sleep(K_MSEC(10));
 			matrixEnd();
 		}
+
 		if (sketch_hdr->flags & SKETCH_FLAG_WAIT_FOR_APP) {
-			// wait for another pin toggle
-			while (gpio_pin_get_dt(&spec) != 0) {
-				k_sleep(K_MSEC(10));
-			}
-			while (gpio_pin_get_dt(&spec) != 1) {
-				k_sleep(K_MSEC(10));
+			while (backup.wait_for_app_magic == 0) {
+				k_sleep(K_MSEC(100));
 			}
 		}
 	}

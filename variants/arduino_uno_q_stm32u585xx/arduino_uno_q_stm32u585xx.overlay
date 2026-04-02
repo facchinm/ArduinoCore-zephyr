@@ -44,6 +44,10 @@
 	pinctrl-names = "default";
 };
 
+&backup_sram {
+	status = "okay";
+};
+
 /*
 &dcmi {
 	status = "okay";
