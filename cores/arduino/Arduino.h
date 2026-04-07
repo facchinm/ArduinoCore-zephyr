@@ -129,14 +129,19 @@ void noInterrupts(void);
 
 int digitalPinToInterrupt(pin_size_t pin);
 
-#define digitalPinToPort(x)    (x)
 #define digitalPinToBitMask(x) (x)
 #define portOutputRegister(x)  (x)
 #define portInputRegister(x)   (x)
 
+const struct device* digitalPinToPortDevice(pin_size_t pinNumber);
+int digitalPinToPinNumber(pin_size_t pinNumber);
+
 #if defined(CONFIG_PWM) || defined(CONFIG_DAC)
 void analogWriteResolution(int bits);
 #endif
+
+//#define F_CPU (DT_PROP(DT_INST(0, DT_CPU_COMPAT), clock_frequency))
+#define F_CPU (SystemCoreClock)
 
 #include <variant.h>
 

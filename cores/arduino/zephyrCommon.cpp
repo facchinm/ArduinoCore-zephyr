@@ -225,6 +225,19 @@ void yield(void) {
 	k_yield();
 }
 
+
+const struct device* digitalPinToPortDevice(pin_size_t pinNumber) {
+	RETURN_ON_INVALID_PIN(pinNumber, nullptr);
+
+	return arduino_pins[pinNumber].port;
+}
+
+int digitalPinToPinNumber(pin_size_t pinNumber) {
+	RETURN_ON_INVALID_PIN(pinNumber, -1);
+
+	return  arduino_pins[pinNumber].pin;
+}
+
 /*
  *  The ACTIVE_HIGH flag is set so that A low physical
  *  level on the pin will be interpreted as value 0.

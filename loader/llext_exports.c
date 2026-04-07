@@ -366,3 +366,7 @@ FORCE_EXPORT_SYM(fs_mkfs);
 FORCE_EXPORT_SYM(fs_register);
 FORCE_EXPORT_SYM(fs_unregister);
 #endif
+
+#ifdef __arm__
+EXPORT_SYMBOL(SystemCoreClock);
+#endif

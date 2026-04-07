@@ -657,7 +657,8 @@ unoq.build.architecture=cortex-m33
 unoq.compiler.zephyr.arch.define=
 
 unoq.build.float-abi=-mfloat-abi=hard
-unoq.build.extra_flags=
+#compat mode for NeoPixel lib
+unoq.build.extra_flags=-DARDUINO_ARCH_STM32=1
 unoq.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
 unoq.build.board=UNO_Q
 unoq.build.zephyr_hals=hal_stm32

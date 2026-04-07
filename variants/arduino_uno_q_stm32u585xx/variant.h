@@ -28,3 +28,20 @@
 #define LED4_R DIGITAL_PIN_GPIOS_FIND_NODE(DT_NODELABEL(led4_red))
 #define LED4_G DIGITAL_PIN_GPIOS_FIND_NODE(DT_NODELABEL(led4_green))
 #define LED4_B DIGITAL_PIN_GPIOS_FIND_NODE(DT_NODELABEL(led4_blue))
+
+#include <stm32u5xx_ll_gpio.h>
+
+struct gpio_stm32_config {
+	/* gpio_driver_config needs to be first */
+	struct gpio_driver_config common;
+	/* port base address */
+	uint32_t *base;
+};
+
+#define digitalPinToPort(x)    (GPIO_TypeDef *)(((struct gpio_stm32_config *)(digitalPinToPortDevice(x)->config))->base)
+#define digitalPinToPinName(x) (digitalPinToPinNumber(x))
+#define STM_LL_GPIO_PIN(x)     (1U << x)
+
+#define digitalPinToBitMask(x) STM_LL_GPIO_PIN(x)
+#define portOutputRegister(x)  (digitalPinToPort(x)->ODR)
+#define portInputRegister(x)   (digitalPinToPort(x)->IDR)
