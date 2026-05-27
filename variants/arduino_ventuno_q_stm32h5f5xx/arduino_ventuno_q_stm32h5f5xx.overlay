@@ -190,7 +190,8 @@
 		analog-switch-gpios = <&gpioi 8 GPIO_ACTIVE_HIGH>;    /* Analog switch for VREF */
 
 		control-gpios = <&gpiog 13 GPIO_ACTIVE_HIGH>,    /* Internal SPI RDY, connected to GPIO_MD_95 */
-				<&gpiok 10 GPIO_ACTIVE_HIGH>;    /* if read as 0, we are in USB flashing mode */
+				<&gpiok 10 GPIO_ACTIVE_HIGH>,    /* if read as 0, we are in USB flashing mode */
+				<&gpiod 6 GPIO_ACTIVE_HIGH>;     /* used to measure eventually 1V8 fault */
 
 		power-button-gpios = <&gpiok 13 GPIO_ACTIVE_HIGH>,  /* Read as vertical button press */
 				     <&gpiog 9 GPIO_ACTIVE_HIGH>,   /* Should follow vertical button */

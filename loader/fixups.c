@@ -454,6 +454,22 @@ int system_utilities(void) {
 			GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), control_gpios, 1);
 	gpio_pin_configure_dt(&EDL_mode, GPIO_INPUT);
 
+	const struct gpio_dt_spec fault_1v8 =
+			GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), control_gpios, 2);
+	gpio_pin_configure_dt(&fault_1v8, GPIO_INPUT | GPIO_PULL_UP);
+	if (gpio_pin_get_dt(&fault_1v8) == 0) {
+		k_sleep(K_MSEC(300));
+		if (gpio_pin_get_dt(&fault_1v8) == 0) {
+			gpio_pin_configure_dt(&led0r, GPIO_OUTPUT);
+			gpio_pin_configure_dt(&led1r, GPIO_OUTPUT);
+			while (1) {
+				gpio_pin_toggle_dt(&led0r);
+				gpio_pin_toggle_dt(&led1r);
+				k_sleep(K_MSEC(200));
+			}
+		}
+	}
+
 	gpio_pin_configure_dt(&power_button, GPIO_INPUT | GPIO_PULL_UP);
 	gpio_init_callback(&button_cb_data, button_irq, BIT(power_button.pin));
 	gpio_add_callback(power_button.port, &button_cb_data);
