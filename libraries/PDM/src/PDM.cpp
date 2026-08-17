@@ -114,8 +114,13 @@ static int pdm_configure(int channels, int sampleRate) {
 	stream.pcm_width = PDM_SAMPLE_BIT_WIDTH;
 	stream.mem_slab = &pdm_slab;
 
+#if PDM_IS_RP2040_PIO
+	cfg.io.min_pdm_clk_freq = 1200000;
+	cfg.io.max_pdm_clk_freq = 3250000;
+#else
 	cfg.io.min_pdm_clk_freq = 1000000;
 	cfg.io.max_pdm_clk_freq = 3500000;
+#endif
 	cfg.io.min_pdm_clk_dc = 40;
 	cfg.io.max_pdm_clk_dc = 60;
 
@@ -152,7 +157,8 @@ static int pdm_stop() {
 static void pdm_gain(int gain) {
 	/* at the present the zephyr dmic_nrfx_pdm.c does not support the set
 	 * of the gain (gain_l and gain_r are defined in the nrf HAL but not
-	 * used by the driver which use a default value) */
+	 * used by the driver which use a default value); on the RP2040 the
+	 * decimation filter gain is fixed by the 'gain' devicetree property */
 #if PDM_IS_NRF
 	NRF_PDM->GAINR = gain;
 	NRF_PDM->GAINL = gain;

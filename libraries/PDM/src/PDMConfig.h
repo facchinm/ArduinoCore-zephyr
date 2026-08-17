@@ -11,8 +11,9 @@
 #include <zephyr/devicetree.h>
 
 /* Identify the PDM controller from the 'compatible' of its devicetree node */
-#define PDM_IS_NRF   DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), nordic_nrf_pdm)
-#define PDM_IS_DFSDM DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), st_stm32_dfsdm_dmic)
+#define PDM_IS_NRF        DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), nordic_nrf_pdm)
+#define PDM_IS_DFSDM      DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), st_stm32_dfsdm_dmic)
+#define PDM_IS_RP2040_PIO DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), raspberrypi_rp2040_pdm)
 
 /* The number of samples the user receive
  * For performance reason the user is strongly suggested to use this
@@ -85,6 +86,18 @@ typedef int16_t PDMSample;
 #else
 #error "PDM_SAMPLE_BIT_WIDTH must be 16 or 24 for STM32 DFSDM"
 #endif
+#elif PDM_IS_RP2040_PIO
+/* RP2040 PIO PDM: 16-bit samples only, smaller blocks to match the driver's
+ * fixed 512-byte raw capture buffer (64 samples at decimation 64). */
+#undef PDM_NUMBER_OF_SAMPLES
+#define PDM_NUMBER_OF_SAMPLES 64
+#undef SLAB_BLOCK_NUM
+#define SLAB_BLOCK_NUM 8
+#define SLAB_ALIGN     4
+#if PDM_SAMPLE_BIT_WIDTH != 16
+#error "PDM_SAMPLE_BIT_WIDTH must be 16 for the RP2040 PIO PDM driver"
+#endif
+#define SLAB_BLOCK_SIZE (PDM_NUMBER_OF_SAMPLES * 2)
 #else
 #error "Unsupported 'dmic_dev' controller: cannot determine PDM slab configuration"
 #endif
