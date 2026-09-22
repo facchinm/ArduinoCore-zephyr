@@ -4,8 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifdef CONFIG_OTA
-
-#include "../../loader/ota/ota_api.h"
-
-#endif // CONFIG_OTA
+#define SECRET_SSID ""
+#define SECRET_PASS ""

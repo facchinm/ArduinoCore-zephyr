@@ -7,10 +7,12 @@
 #include <zephyr/fs/fs.h>
 #include <zephyr/sys/reboot.h>
 
-#include "ota_api.h"
+#include <ota.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ota_sketch, CONFIG_OTA_LOG_LEVEL);
+
+#define OTA_SKETCH_FILENAME CONFIG_OTA_SKETCH_UPDATE_PATH CONFIG_OTA_SKETCH_TEMP_PATH_POSTFIX
 
 int ota_sketch_ready() {
 	struct fs_dirent entry;

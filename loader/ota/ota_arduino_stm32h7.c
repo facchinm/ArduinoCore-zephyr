@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "ota_api.h"
+#include <ota.h>
 #include <zephyr/fs/fs.h>
+
+#define OTA_LOADER_FILENAME CONFIG_OTA_LOADER_UPDATE_PATH CONFIG_OTA_LOADER_TEMP_PATH_POSTFIX
 #include <zephyr/sys/reboot.h>
 #include <stm32h7xx_ll_rtc.h>
 #include <stm32_backup_domain.h>

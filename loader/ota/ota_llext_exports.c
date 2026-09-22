@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "ota_api.h"
+#include <ota.h>
 #include <zephyr/llext/symbol.h>
 
 EXPORT_SYMBOL(ota_sketch_ready);
