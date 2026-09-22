@@ -8,7 +8,6 @@
 #include <strings.h>
 #include <zephyr/llext/symbol.h>
 #include <zephyr/usb/usb_device.h>
-#include <zephyr/sys/reboot.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
