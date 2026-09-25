@@ -49,7 +49,7 @@ static void (*_onReceive)(void) = NULL;
  * ---- PDM DRIVER INTERFACE (zephyr dmic) ----
  */
 
-#if defined(ARDUINO_NANO33BLE) || defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
+#if defined(ARDUINO_NANO33BLE) || defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION) || defined(ARDUINO_PORTENTA_H7_M7)
 
 static struct pcm_stream_cfg stream;
 static struct dmic_cfg cfg;
@@ -120,8 +120,8 @@ static int pdm_configure(int channels, int sampleRate) {
 	stream.pcm_width = PDM_SAMPLE_BIT_WIDTH;
 	stream.mem_slab = &pdm_slab;
 
-	cfg.io.min_pdm_clk_freq = 1000000;
-	cfg.io.max_pdm_clk_freq = 3500000;
+	cfg.io.min_pdm_clk_freq = 1200000;
+	cfg.io.max_pdm_clk_freq = 3250000;
 	cfg.io.min_pdm_clk_dc = 40;
 	cfg.io.max_pdm_clk_dc = 60;
 
