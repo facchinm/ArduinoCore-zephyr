@@ -50,6 +50,8 @@
 &spi4 {
     status = "okay";
     zephyr,deferred-init;
+    pinctrl-0 = <&spi4_sck_pe12 &spi4_miso_pe13 &spi4_mosi_pe14>;
+    pinctrl-names = "default";
 };
 
 &spi5 {
@@ -246,22 +248,40 @@
 
 / {
     zephyr,user {
-        digital-pin-gpios = <&gpiog 12 GPIO_ACTIVE_HIGH>,   /* D0  PG12 */
-                            <&gpioa 9 GPIO_ACTIVE_HIGH>,    /* D1  PA9  */
-                            <&gpioa 10 GPIO_ACTIVE_HIGH>,   /* D2  PA10 */
-                            <&gpiog 1 GPIO_ACTIVE_HIGH>,    /* D3  PG1  */
-                            <&gpioe 3 GPIO_ACTIVE_HIGH>,    /* D4  PE3  Red LED */
-                            <&gpioc 13 GPIO_ACTIVE_HIGH>,   /* D5  PC13 Green LED */
-                            <&gpiof 4 GPIO_ACTIVE_HIGH>,    /* D6  PF4  Blue LED */
-                            <&gpiog 0 GPIO_ACTIVE_HIGH>,    /* D7  PG0  SE05X_EN */
-                            <&gpiok 1 GPIO_ACTIVE_HIGH>,    /* D8  PK1  tim1 ch1  */
-                            <&gpioj 9 GPIO_ACTIVE_HIGH>,    /* D9  PJ9  tim1 ch3  */
-                            <&gpioj 10 GPIO_ACTIVE_HIGH>,   /* D10 PJ10 tim8 ch2  */
-                            <&gpioh 15 GPIO_ACTIVE_HIGH>,   /* D11 PH15 tim8 ch3n */
-                            <&gpioh 6 GPIO_ACTIVE_HIGH>,    /* D12 PH6  tim12 ch1 */
-                            <&gpioc 4 GPIO_ACTIVE_HIGH>,    /* D13 PC4  A0 ADC1 ch4  */
-                            <&gpiof 13 GPIO_ACTIVE_HIGH>,   /* D14 PF13 A1 ADC2 ch2  */
-                            <&gpiof 3 GPIO_ACTIVE_HIGH>;    /* D15 PF3  A2 ADC3 ch5  */
+        digital-pin-gpios = <&gpiog 12 GPIO_ACTIVE_HIGH>, /* D0 D0 */
+                            <&gpioa 9 GPIO_ACTIVE_HIGH>, /* D1 D1 TX */
+                            <&gpioa 10 GPIO_ACTIVE_HIGH>, /* D2 D2 RX */
+                            <&gpiog 1 GPIO_ACTIVE_HIGH>, /* D3 D3 */
+                            <&gpioc 7 GPIO_ACTIVE_HIGH>, /* D4 D4 */
+                            <&gpioc 6 GPIO_ACTIVE_HIGH>, /* D5 D5 */
+                            <&gpiof 6 GPIO_ACTIVE_HIGH>, /* D6 SPI1 SS */
+                            <&gpioe 11 GPIO_ACTIVE_HIGH>, /* D7 SPI SS */
+                            <&gpioe 14 GPIO_ACTIVE_HIGH>, /* D8 SPI MOSI */
+                            <&gpioe 12 GPIO_ACTIVE_HIGH>, /* D9 SPI SCK */
+                            <&gpioe 13 GPIO_ACTIVE_HIGH>, /* D10 SPI MISO */
+                            <&gpiob 9 GPIO_ACTIVE_HIGH>, /* D11 Wire SDA */
+                            <&gpiob 8 GPIO_ACTIVE_HIGH>, /* D12 Wire SCL */
+                            <&gpioc 9 GPIO_ACTIVE_HIGH>, /* D13 Wire2 SDA */
+                            <&gpioa 8 GPIO_ACTIVE_HIGH>, /* D14 Wire2 SCL */
+                            <&gpioc 4 GPIO_ACTIVE_HIGH>, /* D15 A0 */
+                            <&gpiof 13 GPIO_ACTIVE_HIGH>, /* D16 A1 */
+                            <&gpiof 3 GPIO_ACTIVE_HIGH>, /* D17 A2 */
+                            <&gpio_invalid 0 GPIO_ACTIVE_HIGH>, /* D18 Reserved (I2C3 SDA) */
+                            <&gpio_invalid 1 GPIO_ACTIVE_HIGH>, /* D19 Reserved (I2C3 SCL) */
+                            <&gpiof 11 GPIO_ACTIVE_HIGH>, /* D20 SPI1 MOSI */
+                            <&gpiof 7 GPIO_ACTIVE_HIGH>, /* D21 SPI1 SCK */
+                            <&gpiof 8 GPIO_ACTIVE_HIGH>, /* D22 SPI1 MISO */
+                            <&gpioe 3 GPIO_ACTIVE_HIGH>, /* D23 LEDR */
+                            <&gpioc 13 GPIO_ACTIVE_HIGH>, /* D24 LEDG */
+                            <&gpiof 4 GPIO_ACTIVE_HIGH>, /* D25 LEDB */
+                            <&gpioa 0 GPIO_ACTIVE_HIGH>, /* D26 PA0 */
+                            <&gpioa 1 GPIO_ACTIVE_HIGH>, /* D27 IMU interrupt */
+                            <&gpiog 0 GPIO_ACTIVE_HIGH>, /* D28 SE05X_EN */
+                            <&gpiok 1 GPIO_ACTIVE_HIGH>, /* D29 PWM tim1 ch1 */
+                            <&gpioj 9 GPIO_ACTIVE_HIGH>, /* D30 PWM tim1 ch3 */
+                            <&gpioj 10 GPIO_ACTIVE_HIGH>, /* D31 PWM tim8 ch2 */
+                            <&gpioh 15 GPIO_ACTIVE_HIGH>, /* D32 PWM tim8 ch3n */
+                            <&gpioh 6 GPIO_ACTIVE_HIGH>; /* D33 PWM tim12 ch1 */
 
         adc-pin-gpios = <&gpioc 4 GPIO_ACTIVE_HIGH>,   /* A0 PC4  */
                         <&gpiof 13 GPIO_ACTIVE_HIGH>,   /* A1 PF13 */
@@ -269,9 +289,9 @@
 
         pwm-pin-gpios = <&gpiok 1 GPIO_ACTIVE_HIGH>,   /* D8  PK1  pwm1  ch1  */
                         <&gpioj 9 GPIO_ACTIVE_HIGH>,    /* D9  PJ9  pwm1  ch3  */
-                        <&gpioj 10 GPIO_ACTIVE_HIGH>,   /* D10 PJ10 pwm8  ch2  */
-                        <&gpioh 15 GPIO_ACTIVE_HIGH>,   /* D11 PH15 pwm8  ch3n */
-                        <&gpioh 6 GPIO_ACTIVE_HIGH>;    /* D12 PH6  pwm12 ch1  */
+                        <&gpioj 10 GPIO_ACTIVE_HIGH>,   /* D31 PJ10 pwm8  ch2  */
+                        <&gpioh 15 GPIO_ACTIVE_HIGH>,   /* D32 PH15 pwm8  ch3n */
+                        <&gpioh 6 GPIO_ACTIVE_HIGH>;    /* D33 PH6  pwm12 ch1  */
 
         serials = <&board_cdc_acm_uart>, <&usart1>, <&lpuart1>;
         cdc-acm-serial = <&board_cdc_acm_uart>;
