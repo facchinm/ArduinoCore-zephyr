@@ -89,10 +89,6 @@ static int pdm_configure(int channels, int sampleRate) {
 	if (channels < 1 || channels > 2) {
 		return -ENOTSUP; /* TODO: find the correct value */
 	}
-	/* check on sampleRate */
-	if (!(sampleRate == 16000 || sampleRate == 41667)) {
-		return -ENOTSUP; /* sample rate not supported */
-	}
 	/* set up PDM configuration */
 	stream.pcm_width = PDM_SAMPLE_BIT_WIDTH;
 	stream.mem_slab = &pdm_slab;
