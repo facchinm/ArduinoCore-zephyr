@@ -202,16 +202,37 @@ bool Camera::begin(uint32_t width, uint32_t height, uint32_t pixformat, bool byt
 		return false;
 	}
 
+	bool supported = false;
+
 	for (size_t i = 0; caps.format_caps[i].pixelformat != 0; i++) {
 		const struct video_format_cap *fcap = &caps.format_caps[i];
-		if (fcap->width_min == width && fcap->height_min == height &&
-			fcap->pixelformat == pixformat) {
-			break;
+
+		if (fcap->pixelformat != pixformat) {
+			continue;
 		}
-		if (caps.format_caps[i + 1].pixelformat == 0) {
-			Serial.println("The specified format is not supported");
-			return false;
+
+		// A capability can describe a single size, where min and max are equal,
+		// or a range the sensor can be windowed to, in increments of the step.
+		if (width < fcap->width_min || width > fcap->width_max || height < fcap->height_min ||
+			height > fcap->height_max) {
+			continue;
 		}
+
+		if (fcap->width_step != 0 && (width - fcap->width_min) % fcap->width_step != 0) {
+			continue;
+		}
+
+		if (fcap->height_step != 0 && (height - fcap->height_min) % fcap->height_step != 0) {
+			continue;
+		}
+
+		supported = true;
+		break;
+	}
+
+	if (!supported) {
+		Serial.println("The specified format is not supported");
+		return false;
 	}
 
 	// Set format.
