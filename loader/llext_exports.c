@@ -204,8 +204,10 @@ FORCE_EXPORT_SYM(net_mgmt_del_event_callback);
 #endif
 
 #if defined(CONFIG_MBEDTLS)
+#if defined(CONFIG_TLS_CREDENTIALS)
 FORCE_EXPORT_SYM(tls_credential_add);
 FORCE_EXPORT_SYM(tls_credential_get);
+#endif
 #if !defined(CONFIG_MBEDTLS_INIT)
 EXPORT_SYMBOL(mbedtls_memory_buffer_alloc_init);
 #endif
