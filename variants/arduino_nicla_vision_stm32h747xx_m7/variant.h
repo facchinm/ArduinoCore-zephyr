@@ -6,22 +6,24 @@
 
 #include "pure_analog_pins.h"
 
-#define LEDR    (4u) /* D4 - Red LED PE_3 */
-#define LEDG    (5u) /* D5 - Green LED PC_13 */
-#define LEDB    (6u) /* D6 - Blue LED PF_4 */
+#define LEDR    (23u) /* PE3 */
+#define LEDG    (24u) /* PC13 */
+#define LEDB    (25u) /* PF4 */
 
-/* SPI interface for LSM6DSOX IMU */
-#define LSM6DS_DEFAULT_SPI    SPI1
-#define LSM6DS_INT    (1u)
-#define PIN_SPI_SS1    0u  /* CS not used */
+#define SS      (7u)  /* PE11 */
+#define MOSI    (8u)  /* PE14 */
+#define SCK     (9u)  /* PE12 */
+#define MISO    (10u) /* PE13 */
 
-// TODO: correctly handle these legacy defines
-#define MOSI    0
-#define MISO    0
-#define SCK     0
-#define SS      0
+#define SDA     (11u) /* PB9 */
+#define SCL     (12u) /* PB8 */
 
-#define SDA     0
-#define SCL     0
+/* SPI interface for LSM6DSOX IMU is on SPI1 */
+#define LSM6DS_DEFAULT_SPI SPI1
+#define PIN_SPI_SS1    (6u)  /* PF6 */
+#define PIN_SPI_MOSI1  (20u) /* PF11 */
+#define PIN_SPI_SCK1   (21u) /* PF7 */
+#define PIN_SPI_MISO1  (22u) /* PF8 */
+#define LSM6DS_INT     (27u) /* PA1 */
 
-#define SE05X_ENABLE_GPIO (7u)
+#define SE05X_ENABLE_GPIO (28u) /* PG0 */
