@@ -157,8 +157,21 @@ int digitalPinToPinIndex(pin_size_t pinNumber);
 void analogWriteResolution(int bits);
 #endif
 
-#if defined(__arm__)
-#define F_CPU (SystemCoreClock)
+/* There is no Zephyr macro reporting the CPU clock. Try vendor-specific DT
+ * nodes first, fall back to the frequency of the SoC reference clock.
+ */
+#if DT_NODE_HAS_PROP(DT_PATH(cpus, cpu_0), clock_frequency) /* Silabs */
+#define F_CPU DT_PROP(DT_PATH(cpus, cpu_0), clock_frequency)
+#elif DT_NODE_HAS_PROP(DT_NODELABEL(rcc), clock_frequency) /* STM32 */
+#define F_CPU DT_PROP(DT_NODELABEL(rcc), clock_frequency)
+#elif DT_NODE_HAS_PROP(DT_NODELABEL(iclk), clock_frequency) /* Renesas RA */
+#define F_CPU DT_PROP(DT_NODELABEL(iclk), clock_frequency)
+#elif DT_NODE_HAS_PROP(DT_NODELABEL(clk_sys), clock_frequency) /* RP2040 */
+#define F_CPU DT_PROP(DT_NODELABEL(clk_sys), clock_frequency)
+#elif DT_NODE_HAS_PROP(DT_NODELABEL(hfxo), clock_frequency) /* nRF52 */
+#define F_CPU DT_PROP(DT_NODELABEL(hfxo), clock_frequency)
+#else
+#define F_CPU CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC
 #endif
 
 #include <variant.h>
