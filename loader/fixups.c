@@ -55,6 +55,23 @@ SYS_INIT(disable_bootloader_mpu, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAU
 SYS_INIT(disable_mpu_rasr_xn, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 #endif
 
+#if defined(CONFIG_SOC_SERIES_RP2040)
+/* Raspberry Pi chips do not link CMSIS by default,
+ * copy the content of cmsis/stub/CMSIS/Device/RP2040/Source/system_RP2040.c here
+ */
+#include "hardware/clocks.h"
+
+uint32_t SystemCoreClock;
+
+void SystemCoreClockUpdate(void) {
+	SystemCoreClock = clock_get_hz(clk_sys);
+}
+
+void __attribute__((constructor)) SystemInit(void) {
+	SystemCoreClockUpdate();
+}
+#endif
+
 #if defined(CONFIG_BOARD_ARDUINO_NANO_CONNECT)
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
