@@ -24,6 +24,7 @@
 #endif
 
 #include "../cores/arduino/zephyr_sketch_header.h"
+#include "loader.h"
 
 #define FORCE_EXPORT_SYM(name)                                                                     \
 	extern void name(void);                                                                        \
@@ -508,7 +509,7 @@ EXPORT_SYMBOL(arm_irq_is_enabled);
 EXPORT_SYMBOL(arm_irq_priority_set);
 #endif
 
-#if defined(__arm__) && !defined(CONFIG_SOC_FAMILY_RPI_PICO)
+#if defined(__arm__)
 EXPORT_SYMBOL(SystemCoreClock);
 #endif
 

@@ -129,6 +129,8 @@ static const uint8_t SCL = PIN_WIRE_SCL;
 #define SerialNina      Serial3
 #define SerialHCI       Serial2
 
+extern uint32_t SystemCoreClock;
+
 // Note: nina_pins.h should be included after Arduino.h
 // It is automatically included by WiFiNINA.h when needed
 
