@@ -541,3 +541,11 @@ qspi_flash: &at25sf128a {};
 		mount-point = "/SD:";
 	};
 };
+
+/* External interrupt channel 6: P000 (D22/A7), P301 (D40), P409 (D28) and
+ * PA08 (D75). NVIC line 36 is not used by any other device.
+ */
+&port_irq6 {
+	interrupts = <36 12>;
+	status = "okay";
+};
