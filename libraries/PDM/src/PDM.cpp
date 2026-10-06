@@ -11,6 +11,8 @@
 #include <zephyr/drivers/regulator.h>
 #include <zephyr/kernel.h>
 
+#include "zephyrPinctrl.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -87,24 +89,19 @@ static int pdm_read(void **buffer, size_t *size) {
 static int pdm_configure(int channels, int sampleRate) {
 	/* checks and verifications */
 
+	int err;
 	/* note: due to the hierarchical structure of the DFSDM peripheral with
 	 * Arduino GIGA is necessary to turn dfsm on before the actual pdm which in
 	 * this case is just a filter within the dfsdm */
 #if PDM_IS_DFSDM
-	if (!device_is_ready(dfsdm_dev)) {
-		int err = device_init(dfsdm_dev);
-		if (err < 0) {
-			return -ENODEV;
-		}
+	err = zephyr::arduino::init_dev_apply_pinctrl(dfsdm_dev);
+	if (err < 0) {
+		return err;
 	}
 #endif
-	/* verify digital microphone is ready */
-	if (!device_is_ready(dmic_dev)) {
-
-		int err = device_init(dmic_dev);
-		if (err < 0) {
-			return -ENODEV;
-		}
+	err = zephyr::arduino::init_dev_apply_pinctrl(dmic_dev);
+	if (err < 0) {
+		return err;
 	}
 	/* check on channels */
 	if (channels < 1 || channels > 2) {
