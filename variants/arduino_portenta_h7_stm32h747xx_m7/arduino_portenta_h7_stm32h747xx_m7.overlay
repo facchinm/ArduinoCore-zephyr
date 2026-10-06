@@ -295,10 +295,6 @@
 	};
 };
 
-&ltdc {
-	zephyr,deferred-init;
-};
-
 / {
 	chosen {
 		zephyr,camera = &dcmi;
@@ -511,6 +507,7 @@ qspi_flash: &mx25l12833f {};
 
 &ltdc {
 	status = "okay";
+	zephyr,deferred-init;
 	ext-sdram = <&sdram1>;
 	width = <1024>;
 	height = <768>;
