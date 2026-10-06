@@ -75,6 +75,10 @@
 	zephyr,deferred-init;
 };
 
+&st7701 {
+	zephyr,deferred-init;
+};
+
 &i2c1 {
 	status = "okay";
 	zephyr,deferred-init;
