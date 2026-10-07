@@ -37,7 +37,7 @@ static struct k_msgq pdm_rx_msgq;
 static char __aligned(4) pdm_msgq_buffer[SLAB_BLOCK_NUM * sizeof(void *)];
 
 static struct k_mem_slab pdm_slab;
-static uint8_t __aligned(32) pdm_slab_buffer[SLAB_BLOCK_SIZE * SLAB_BLOCK_NUM];
+static uint8_t __aligned(SLAB_ALIGN) pdm_slab_buffer[SLAB_BLOCK_SIZE * SLAB_BLOCK_NUM];
 
 static struct k_thread pdm_thread_data;
 static k_thread_stack_t *pdm_thread_stack;
