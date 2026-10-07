@@ -21,8 +21,7 @@ class PDMClass {
 public:
 	PDMClass();
 	virtual ~PDMClass();
-	/* support 1 or 2 channels, sampleRate can be 16000 or 41667 */
-	int begin(int channels = 1, int sampleRate = 16000);
+	int begin(int channels = PDM_DEFAULT_CHANNELS, int sampleRate = PDM_SAMPLE_RATE);
 	void end();
 	virtual int available();
 	virtual int read(void *buffer, size_t size);

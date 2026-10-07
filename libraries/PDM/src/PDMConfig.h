@@ -7,6 +7,8 @@
 #ifndef ARDUINO_ZEPHYR_PDMCONFIG_H
 #define ARDUINO_ZEPHYR_PDMCONFIG_H
 
+#include <stdint.h>
+
 /* The number of samples the user receive
  * For performance reason the user is strongly suggested to use this
  * dimension for its application buffer that take the audio samples */
@@ -14,11 +16,34 @@
 #define PDM_NUMBER_OF_SAMPLES 512
 #endif
 
-/* size in bit of an audio sample */
-/* NANO 33 BLE will work only if this value is 16
- * GIGA can work up with 24 */
+/* size in bit of an audio sample.
+ * NANO 33 BLE works only with 16; GIGA / NICLA VISION also support 24.
+ * Default is 16 on every board. If you switch a GIGA/Nicla sketch to 24-bit,
+ * also set SAMPLE_WIDTH_BITS to 24 in
+ * extras/PDMSerialAudioRecorder/PDMSerialAudioRecorder.py so recordings are
+ * decoded at the right width. */
 #ifndef PDM_SAMPLE_BIT_WIDTH
 #define PDM_SAMPLE_BIT_WIDTH 16
+#endif
+
+/* PCM output sample rate in Hz.
+ * Default is 16000 on every board. If you change the sketch sample rate, also
+ * set SAMPLE_RATE in extras/PDMSerialAudioRecorder/PDMSerialAudioRecorder.py so
+ * recordings play back at the right speed/pitch. */
+#ifndef PDM_SAMPLE_RATE
+#define PDM_SAMPLE_RATE 16000
+#endif
+
+/* Default number of input channels */
+#ifndef PDM_DEFAULT_CHANNELS
+#define PDM_DEFAULT_CHANNELS 1
+#endif
+
+/* Storage type for one PCM sample */
+#if PDM_SAMPLE_BIT_WIDTH == 24
+typedef int32_t PDMSample;
+#else
+typedef int16_t PDMSample;
 #endif
 
 /* Default digital gain (linear multiplier) for boards with no analog mic gain,
