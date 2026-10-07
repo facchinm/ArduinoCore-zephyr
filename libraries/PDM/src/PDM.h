@@ -7,9 +7,10 @@
 #ifndef ARDUINO_ZEPHYR_PDM_H
 #define ARDUINO_ZEPHYR_PDM_H
 
-/* TODO: add GIGA when zephyr support is added */
-#if !defined(ARDUINO_NANO33BLE)
-#error "Only Nano 33 BLE board is currently supported"
+#include <zephyr/devicetree.h>
+
+#if !DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(dmic_dev))
+#error "No enabled 'dmic_dev' devicetree node found: this board does not define a PDM microphone"
 #endif
 
 #include <Arduino.h>
@@ -22,8 +23,7 @@ class PDMClass {
 public:
 	PDMClass();
 	virtual ~PDMClass();
-	/* support 1 or 2 channels, sampleRate can be 16000 or 41667 */
-	int begin(int channels = 1, int sampleRate = 16000);
+	int begin(int channels = PDM_DEFAULT_CHANNELS, int sampleRate = PDM_SAMPLE_RATE);
 	void end();
 	virtual int available();
 	virtual int read(void *buffer, size_t size);
