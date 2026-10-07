@@ -8,6 +8,11 @@
 #define ARDUINO_ZEPHYR_PDMCONFIG_H
 
 #include <stdint.h>
+#include <zephyr/devicetree.h>
+
+/* Identify the PDM controller from the 'compatible' of its devicetree node */
+#define PDM_IS_NRF   DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), nordic_nrf_pdm)
+#define PDM_IS_DFSDM DT_NODE_HAS_COMPAT(DT_NODELABEL(dmic_dev), st_stm32_dfsdm_dmic)
 
 /* The number of samples the user receive
  * For performance reason the user is strongly suggested to use this
@@ -60,24 +65,28 @@ typedef int16_t PDMSample;
 #define PDM_THREAD_PRIORITY 7
 #endif
 
-/* memory slab configuration */
-#if defined(ARDUINO_NANO33BLE)
+/* memory slab configuration (keyed on the mic controller type) */
 #define SLAB_BLOCK_NUM 4
-#define SLAB_ALIGN     4
+
+#if PDM_IS_NRF
+/* nRF PDM peripheral: 16-bit samples only */
+#define SLAB_ALIGN 4
 #if PDM_SAMPLE_BIT_WIDTH != 16
-#error "PDM_SAMPLE_BIT_WIDTH must be set to 16 for ARDUINO_NANO33BLE"
+#error "PDM_SAMPLE_BIT_WIDTH must be 16 for the nRF PDM peripheral"
 #endif
 #define SLAB_BLOCK_SIZE (PDM_NUMBER_OF_SAMPLES * 2)
-#elif defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
-#define SLAB_BLOCK_NUM 4
-#define SLAB_ALIGN     32
+#elif PDM_IS_DFSDM
+/* STM32 DFSDM: 16- or 24-bit; 32-byte align for cache-line DMA maintenance */
+#define SLAB_ALIGN 32
 #if PDM_SAMPLE_BIT_WIDTH == 16
 #define SLAB_BLOCK_SIZE (PDM_NUMBER_OF_SAMPLES * 2)
 #elif PDM_SAMPLE_BIT_WIDTH == 24
 #define SLAB_BLOCK_SIZE (PDM_NUMBER_OF_SAMPLES * 4)
 #else
-#error "PDM_SAMPLE_BIT_WIDTH must be 16 or 24 for ARDUINO_GIGA / ARDUINO_NICLA_VISION"
+#error "PDM_SAMPLE_BIT_WIDTH must be 16 or 24 for STM32 DFSDM"
 #endif
+#else
+#error "Unsupported 'dmic_dev' controller: cannot determine PDM slab configuration"
 #endif
 
 #endif // ARDUINO_ZEPHYR_PDMCONFIG_H

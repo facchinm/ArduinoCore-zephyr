@@ -7,8 +7,10 @@
 #ifndef ARDUINO_ZEPHYR_PDM_H
 #define ARDUINO_ZEPHYR_PDM_H
 
-#if !defined(ARDUINO_NANO33BLE) && !defined(ARDUINO_GIGA) && !defined(ARDUINO_NICLA_VISION)
-#error "Only Nano 33 BLE, Arduino GIGA and Nicla Vision boards are currently supported"
+#include <zephyr/devicetree.h>
+
+#if !DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(dmic_dev))
+#error "No enabled 'dmic_dev' devicetree node found: this board does not define a PDM microphone"
 #endif
 
 #include <Arduino.h>

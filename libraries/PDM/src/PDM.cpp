@@ -15,7 +15,7 @@
 #include <cstdint>
 #include <cstring>
 
-#if defined(ARDUINO_NANO33BLE)
+#if PDM_IS_NRF
 #include <hal/nrf_pdm.h>
 #endif
 
@@ -49,13 +49,11 @@ static void (*_onReceive)(void) = NULL;
  * ---- PDM DRIVER INTERFACE (zephyr dmic) ----
  */
 
-#if defined(ARDUINO_NANO33BLE) || defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
-
 static struct pcm_stream_cfg stream;
 static struct dmic_cfg cfg;
 /* the PDM mic zephyr device */
 static const struct device *const dmic_dev = DEVICE_DT_GET(DT_NODELABEL(dmic_dev));
-#if defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
+#if PDM_IS_DFSDM
 static const struct device *dfsdm_dev = DEVICE_DT_GET(DT_NODELABEL(dfsdm));
 
 /* DFSDM has no analog gain: apply a saturating digital gain per sample. */
@@ -92,7 +90,7 @@ static int pdm_configure(int channels, int sampleRate) {
 	/* note: due to the hierarchical structure of the DFSDM peripheral with
 	 * Arduino GIGA is necessary to turn dfsm on before the actual pdm which in
 	 * this case is just a filter within the dfsdm */
-#if defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
+#if PDM_IS_DFSDM
 	if (!device_is_ready(dfsdm_dev)) {
 		int err = device_init(dfsdm_dev);
 		if (err < 0) {
@@ -155,16 +153,14 @@ static void pdm_gain(int gain) {
 	/* at the present the zephyr dmic_nrfx_pdm.c does not support the set
 	 * of the gain (gain_l and gain_r are defined in the nrf HAL but not
 	 * used by the driver which use a default value) */
-#if defined(ARDUINO_NANO33BLE)
+#if PDM_IS_NRF
 	NRF_PDM->GAINR = gain;
 	NRF_PDM->GAINL = gain;
-#elif defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
+#elif PDM_IS_DFSDM
 	/* linear digital gain multiplier, applied per sample in the RX thread */
 	pdm_digital_gain = (gain < 1) ? 1 : gain;
 #endif
 }
-
-#endif
 
 /*
  * ---- MIC RECEIVING THREAD ----
@@ -178,7 +174,7 @@ void pdm_thread(void *, void *, void *) {
 		if (ret < 0) {
 			continue;
 		}
-#if defined(ARDUINO_GIGA) || defined(ARDUINO_NICLA_VISION)
+#if PDM_IS_DFSDM
 		pdm_apply_gain(buffer, size);
 #endif
 
