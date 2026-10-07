@@ -15,11 +15,13 @@
 // Nano 33 BLE only supports 1 channel
 static const char channels = 1;
 // default PCM output frequency
-static const int frequency = 16000;
+static const int frequency = PDM_SAMPLE_RATE;
+
 // Buffer to read samples into. For best performance, match its size to the
 // buffer used internally by the PDM library (PDM_NUMBER_OF_SAMPLES).
-short sampleBuffer[PDM_NUMBER_OF_SAMPLES];
-// Number of bytes read
+// PDMSample follows the configured PCM width (16- or 24-bit).
+PDMSample sampleBuffer[PDM_NUMBER_OF_SAMPLES];
+// Number of samples read
 volatile int samplesRead;
 
 void setup() {
@@ -68,6 +70,5 @@ void onPDMdata() {
 	// Read into the sample buffer
 	int bytesRead = PDM.read(sampleBuffer, sizeof(sampleBuffer));
 
-	// 16-bit, 2 bytes per sample
-	samplesRead = bytesRead / 2;
+	samplesRead = bytesRead / sizeof(PDMSample);
 }
