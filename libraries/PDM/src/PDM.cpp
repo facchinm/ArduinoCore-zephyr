@@ -11,6 +11,8 @@
 #include <zephyr/drivers/regulator.h>
 #include <zephyr/kernel.h>
 
+#include "zephyrPinctrl.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -87,24 +89,19 @@ static int pdm_read(void **buffer, size_t *size) {
 static int pdm_configure(int channels, int sampleRate) {
 	/* checks and verifications */
 
+	int err;
 	/* note: due to the hierarchical structure of the DFSDM peripheral with
 	 * Arduino GIGA is necessary to turn dfsm on before the actual pdm which in
 	 * this case is just a filter within the dfsdm */
 #if PDM_IS_DFSDM
-	if (!device_is_ready(dfsdm_dev)) {
-		int err = device_init(dfsdm_dev);
-		if (err < 0) {
-			return -ENODEV;
-		}
+	err = zephyr::arduino::init_dev_apply_pinctrl(dfsdm_dev);
+	if (err < 0) {
+		return err;
 	}
 #endif
-	/* verify digital microphone is ready */
-	if (!device_is_ready(dmic_dev)) {
-
-		int err = device_init(dmic_dev);
-		if (err < 0) {
-			return -ENODEV;
-		}
+	err = zephyr::arduino::init_dev_apply_pinctrl(dmic_dev);
+	if (err < 0) {
+		return err;
 	}
 	/* check on channels */
 	if (channels < 1 || channels > 2) {
@@ -114,8 +111,13 @@ static int pdm_configure(int channels, int sampleRate) {
 	stream.pcm_width = PDM_SAMPLE_BIT_WIDTH;
 	stream.mem_slab = &pdm_slab;
 
+#if PDM_IS_RP2040_PIO
+	cfg.io.min_pdm_clk_freq = 1200000;
+	cfg.io.max_pdm_clk_freq = 3250000;
+#else
 	cfg.io.min_pdm_clk_freq = 1000000;
 	cfg.io.max_pdm_clk_freq = 3500000;
+#endif
 	cfg.io.min_pdm_clk_dc = 40;
 	cfg.io.max_pdm_clk_dc = 60;
 
@@ -152,7 +154,8 @@ static int pdm_stop() {
 static void pdm_gain(int gain) {
 	/* at the present the zephyr dmic_nrfx_pdm.c does not support the set
 	 * of the gain (gain_l and gain_r are defined in the nrf HAL but not
-	 * used by the driver which use a default value) */
+	 * used by the driver which use a default value); on the RP2040 the
+	 * decimation filter gain is fixed by the 'gain' devicetree property */
 #if PDM_IS_NRF
 	NRF_PDM->GAINR = gain;
 	NRF_PDM->GAINL = gain;
