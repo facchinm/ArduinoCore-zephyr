@@ -298,3 +298,7 @@ nina_spi: &spi1 {
 uart2: &uart1 {
 	/delete-node/ nina_prog;
 };
+
+&dmic_dev {
+	status = "okay";
+};
