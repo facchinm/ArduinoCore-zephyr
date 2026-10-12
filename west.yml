@@ -53,3 +53,15 @@ manifest:
       # API changes broke the build. Update this SHA once a newer commit is
       # verified against the Zephyr revision above.
       revision: cf24edd66ab173d20f734e3f3350b1a1c053a904
+
+    - name: zephyr-micropython
+      url: https://github.com/facchinm/zephyr-micropython.git
+      revision: main
+      path: modules/lib/zephyr-micropython
+
+    - name: micropython
+      url: https://github.com/bjarki-andreasen/micropython.git
+      revision: aceafd9e98151dd6f32ff142055947f0f32beeda
+      path: modules/lib/micropython
+      submodules:
+        - path: lib/micropython-lib
