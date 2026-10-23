@@ -777,3 +777,44 @@ ventunoq.bootloader.tool=remoteocd
 ventunoq.bootloader.tool.default=remoteocd
 ventunoq.bootloader.file=zephyr-{build.variant}.elf
 ventunoq.bootloader.target=stm32h5f5xx
+
+################################################################################
+##########
+
+due.name=Arduino Due
+due.build.core=arduino
+due.build.crossprefix=arm-zephyr-eabi-
+due.build.compiler_path={runtime.tools.arm-zephyr-eabi-1.0.1.path}/bin/
+
+due.menu.link_mode.static=Static
+due.menu.link_mode.static.build.link_mode=static
+due.menu.link_mode.static.upload.extension=bin-zsk.bin
+
+due.build.zephyr_target=arduino_due/sam3x8e
+due.build.zephyr_args=
+due.build.zephyr_hals=hal_atmel
+due.build.zephyr_toolchain=arm-zephyr-eabi
+due.build.artifact=zephyr_main
+due.build.variant=arduino_due_sam3x8e
+
+due.build.extra_flags=
+due.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
+due.build.board=ARDUINO_DUE
+due.upload_port.0.vid=0x2341
+due.upload_port.0.pid=0x003d
+
+# The sketch is flashed together with the loader as a single image
+due.build.combine.pattern=sh -c 'cp "{runtime.platform.path}/firmwares/{bootloader.file}" "{build.path}/{build.project_name}.combined.bin" && truncate -s $(({bootloader.maximum_size})) "{build.path}/{build.project_name}.combined.bin" && cat "{build.path}/{build.project_name}.{upload.extension}" >> "{build.path}/{build.project_name}.combined.bin"'
+
+due.upload.tool=bossac_legacy
+due.upload.tool.default=bossac_legacy
+due.upload.protocol=
+due.upload.transport=
+due.upload.use_1200bps_touch=true
+due.upload.wait_for_upload_port=false
+due.upload.native_usb=false
+
+due.bootloader.tool=bossac_legacy
+due.bootloader.tool.default=bossac_legacy
+due.bootloader.file=zephyr-{build.variant}.bin
+due.bootloader.address=0x0000

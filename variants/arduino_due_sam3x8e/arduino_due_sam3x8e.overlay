@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) Arduino s.r.l. and/or its affiliated companies
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+        chosen {
+                zephyr,code-partition = &code_partition;
+        };
+
+        zephyr,user {
+                /* Arduino R3 header index: A0-A5 = 0-5, D0-D15 = 6-21 */
+                digital-pin-gpios = <&arduino_header 6 0>,  /* D0 */
+                                    <&arduino_header 7 0>,
+                                    <&arduino_header 8 0>,
+                                    <&arduino_header 9 0>,
+                                    <&arduino_header 10 0>,
+                                    <&arduino_header 11 0>,
+                                    <&arduino_header 12 0>,
+                                    <&arduino_header 13 0>,
+                                    <&arduino_header 14 0>,
+                                    <&arduino_header 15 0>,
+                                    <&arduino_header 16 0>,
+                                    <&arduino_header 17 0>,
+                                    <&arduino_header 18 0>,
+                                    <&arduino_header 19 0>, /* D13 / LED */
+                                    <&arduino_header 20 0>, /* D14 / TX3 */
+                                    <&arduino_header 21 0>, /* D15 / RX3 */
+                                    <&arduino_header 0 0>,  /* A0 */
+                                    <&arduino_header 1 0>,
+                                    <&arduino_header 2 0>,
+                                    <&arduino_header 3 0>,
+                                    <&arduino_header 4 0>,
+                                    <&arduino_header 5 0>;
+
+                builtin-led-gpios = <&arduino_header 19 0>;
+
+                /* Hardware PWM: D6-D9 on PWML7-PWML4, 490 Hz */
+                pwm-pin-gpios = <&arduino_header 12 0>,
+                                <&arduino_header 13 0>,
+                                <&arduino_header 14 0>,
+                                <&arduino_header 15 0>;
+
+                pwms = <&pwm0 7 2040816 0>,
+                       <&pwm0 6 2040816 0>,
+                       <&pwm0 5 2040816 0>,
+                       <&pwm0 4 2040816 0>;
+
+                serials = <&uart>;
+                i2cs = <&twi1 &twi0>;
+        };
+};
+
+&pwm0_default {
+        group1 {
+                pinmux = <PC24B_PWM_PWML7>,
+                         <PC23B_PWM_PWML6>,
+                         <PC22B_PWM_PWML5>,
+                         <PC21B_PWM_PWML4>;
+        };
+};
+
+&flash0 {
+        partitions {
+                compatible = "fixed-partitions";
+                #address-cells = <1>;
+                #size-cells = <1>;
+
+                code_partition: partition@0 {
+                        label = "code";
+                        reg = <0x00000000 0x00040000>;
+                        read-only;
+                };
+
+                user_sketch: partition@40000 {
+                        label = "user";
+                        reg = <0x00040000 0x0003c000>;
+                };
+
+                storage_partition: partition@7c000 {
+                        label = "storage";
+                        reg = <0x0007c000 0x00004000>;
+                };
+        };
+};
