@@ -23,12 +23,16 @@ fi
 if [ $# -eq 0 ] || [ x$1 == x"-h" ] || [ x$1 == x"--help" ]; then
 	cat << EOF
 Usage:
-	$0 <arduino_board>
+	$0 <arduino_board> [--debug] [--micropython]
 	$0 <zephyr_board> [<west_args>]
 Build the loader for the given target.
 
 When given an <arduino_board> defined in 'boards.txt' (e.g. 'giga'), the actual
 Zephyr board target and arguments are taken from that definition.
+  --debug        enable the extra/debug.conf options
+  --micropython  run MicroPython in a thread next to the sketch (needs the
+                 'micropython' west group: west config manifest.group-filter
+                 +micropython && west update)
 
 When given a <zephyr_board>, it is passed as the '-b' argument to 'west build'.
 Additional <west_args> are passed as-is at the end of the command line.
@@ -55,9 +59,17 @@ if ! [ -z "$chosen_board" ]; then
 	mapfile -t args < <(jq -cr '.args' <<< "$chosen_board" | grep -oP "$arg_token")
 	upload_offset=$(jq -cr '.upload_offset' <<< "$chosen_board")
 
-	# Check for debug flag and append
-	if [ x$2 == x"--debug" ]; then
-		debug_args=(-- -DEXTRA_CONF_FILE=../extra/debug.conf)
+	# Optional flags, forwarded to CMake
+	cmake_args=()
+	for opt in "${@:2}"; do
+		case "$opt" in
+		--debug) cmake_args+=(-DEXTRA_CONF_FILE=../extra/debug.conf) ;;
+		--micropython) cmake_args+=(-DLOADER_MICROPYTHON=y) ;;
+		*) echo "Unknown option '$opt'"; exit 1 ;;
+		esac
+	done
+	if [ ${#cmake_args[@]} -gt 0 ]; then
+		extra_args=(-- "${cmake_args[@]}")
 	fi
 else
 	# expect Zephyr-compatible target and args
@@ -95,7 +107,7 @@ fi
 BUILD_DIR=build/${variant}
 VARIANT_DIR=variants/${variant}
 rm -rf ${BUILD_DIR}
-west build -d ${BUILD_DIR} -b ${target} loader -t llext-edk "${args[@]}" "${debug_args[@]}"
+west build -d ${BUILD_DIR} -b ${target} loader -t llext-edk "${args[@]}" "${extra_args[@]}"
 
 # Extract the generated EDK tarball and copy it to the variant directory
 mkdir -p ${VARIANT_DIR} firmwares
