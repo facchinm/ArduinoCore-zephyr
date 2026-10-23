@@ -48,3 +48,14 @@ manifest:
       path: modules/lib/cannectivity
       url: https://github.com/CANnectivity/cannectivity.git
       revision: main
+
+    # MicroPython for the loader (-DLOADER_MICROPYTHON=y). Not fetched by default,
+    # enable with: west config manifest.group-filter +micropython && west update
+    - name: micropython
+      remote: facchinm
+      revision: unoq_spi_shell
+      path: modules/micropython
+      groups:
+        - micropython
+
+  group-filter: [-micropython]
