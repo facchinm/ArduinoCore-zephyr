@@ -137,8 +137,10 @@ struct backup_store {
 extern volatile __stm32_backup_sram_section struct backup_store backup;
 
 static int loader(const struct shell *sh) {
-	const struct flash_area *fa;
 	int rc;
+
+#if defined(CONFIG_FLASH_MAP)
+	const struct flash_area *fa;
 
 	/* Test that attempting to open a disabled flash area fails */
 	rc = flash_area_open(PARTITION_ID(user_sketch), &fa);
@@ -147,6 +149,7 @@ static int loader(const struct shell *sh) {
 		recoverable_error_led();
 		return rc;
 	}
+#endif
 
 #if defined(CONFIG_OTA)
 	try_ota_update(fa);
@@ -155,7 +158,13 @@ static int loader(const struct shell *sh) {
 	uintptr_t base_addr = DT_PARTITION_ADDR(DT_NODELABEL(user_sketch));
 
 	char header[SKETCH_HEADER_LEN];
+#if defined(CONFIG_FLASH_MAP)
 	rc = flash_area_read(fa, 0, header, sizeof(header));
+#else
+	/* No flash driver available: the sketch partition is memory mapped */
+	memcpy(header, (const void *)base_addr, sizeof(header));
+	rc = 0;
+#endif
 	if (rc) {
 		printk("Failed to read header, rc %d\n", rc);
 		recoverable_error_led();
