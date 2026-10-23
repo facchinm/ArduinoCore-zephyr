@@ -10,6 +10,18 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS yaml boards)
 set(DTC_OVERLAY_FILE ${CMAKE_CURRENT_LIST_DIR}/../variants/${NORMALIZED_BOARD_TARGET}/${NORMALIZED_BOARD_TARGET}.overlay)
 set(EXTRA_CONF_FILE ${CMAKE_CURRENT_LIST_DIR}/../variants/${NORMALIZED_BOARD_TARGET}/${NORMALIZED_BOARD_TARGET}.conf)
 
+# -DLOADER_MICROPYTHON=y: run MicroPython in a thread next to the sketch
+if(LOADER_MICROPYTHON)
+    set(MICROPYTHON_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/micropython)
+    list(APPEND EXTRA_CONF_FILE ${MICROPYTHON_CFG_DIR}/micropython.conf)
+    if(EXISTS ${MICROPYTHON_CFG_DIR}/${NORMALIZED_BOARD_TARGET}.conf)
+        list(APPEND EXTRA_CONF_FILE ${MICROPYTHON_CFG_DIR}/${NORMALIZED_BOARD_TARGET}.conf)
+    endif()
+    if(EXISTS ${MICROPYTHON_CFG_DIR}/${NORMALIZED_BOARD_TARGET}.overlay)
+        list(APPEND DTC_OVERLAY_FILE ${MICROPYTHON_CFG_DIR}/${NORMALIZED_BOARD_TARGET}.overlay)
+    endif()
+endif()
+
 # Add dts/bindings to DTS_ROOT for custom bindings
 list(APPEND DTS_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 
@@ -46,3 +58,10 @@ target_compile_definitions(app PUBLIC _GNU_SOURCE)
 
 target_link_libraries(app PUBLIC blobs)
 target_link_libraries_ifdef(CONFIG_OTA app PUBLIC ota)
+
+if(CONFIG_LOADER_MICROPYTHON)
+    if(NOT DEFINED ZEPHYR_MICROPYTHON_MODULE_DIR)
+        message(FATAL_ERROR "MicroPython not found, run: west config manifest.group-filter +micropython && west update")
+    endif()
+    include(${ZEPHYR_MICROPYTHON_MODULE_DIR}/ports/zephyr/micropython.cmake)
+endif()

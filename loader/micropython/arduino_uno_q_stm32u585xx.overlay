@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) Arduino s.r.l. and/or its affiliated companies
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* MicroPython REPL over SPI3, PG13 ("Internal SPI RDY", Linux GPIO70) flags pending output */
+
+/ {
+	chosen {
+		micropython,stdio-spi = &spi3;
+	};
+
+	zephyr,user {
+		stdio-spi-rdy-gpios = <&gpiog 13 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&spi3 {
+	/* Default of 1 means one IRQ per byte, too slow as peripheral at 1 MHz */
+	st,fifo-threshold = <4>;
+};

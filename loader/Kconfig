@@ -25,3 +25,15 @@ config MAIN_STACK_REGION
 	  Specify the memory region for main stack.
 
 rsource "ota/Kconfig"
+
+config LOADER_MICROPYTHON
+	bool "Run MicroPython in a thread once the MPU has booted"
+	depends on BOARD_ARDUINO_UNO_Q
+	select MICROPY_RUN_IN_THREAD
+	help
+	  Start the MicroPython interpreter (west project "micropython") in its
+	  own thread after the boot animation, alongside the sketch.
+
+if LOADER_MICROPYTHON
+osource "$(ZEPHYR_MICROPYTHON_MODULE_DIR)/ports/zephyr/Kconfig.micropython"
+endif

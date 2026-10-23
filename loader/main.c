@@ -29,6 +29,10 @@ LOG_MODULE_REGISTER(sketch);
 
 extern struct k_thread z_main_thread;
 
+#ifdef CONFIG_LOADER_MICROPYTHON
+void micropython_start(void);
+#endif
+
 #define SKETCH_RAM_BUFFER_LEN 131072
 
 /* Need to replicate logic from zephyrSerial.h to avoid C++ here */
@@ -278,12 +282,22 @@ static int loader(const struct shell *sh) {
 			matrixEnd();
 		}
 
+#ifdef CONFIG_LOADER_MICROPYTHON
+		micropython_start();
+#endif
+
 		if (sketch_hdr->flags & SKETCH_FLAG_WAIT_FOR_APP) {
 			while (backup.wait_for_app_magic == 0) {
 				k_sleep(K_MSEC(100));
 			}
 		}
 	}
+#ifdef CONFIG_LOADER_MICROPYTHON
+	else {
+		// Sketch asked to start immediately, don't hold MicroPython back either
+		micropython_start();
+	}
+#endif
 #endif
 
 	if (!sketch_valid) {
