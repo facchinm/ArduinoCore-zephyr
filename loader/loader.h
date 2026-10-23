@@ -9,7 +9,7 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#if defined(CONFIG_SOC_SERIES_RP2040)
+#if defined(CONFIG_SOC_SERIES_RP2040) || defined(CONFIG_SOC_SERIES_SAM3X)
 extern uint32_t SystemCoreClock;
 #endif
 
