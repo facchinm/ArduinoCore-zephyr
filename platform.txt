@@ -168,6 +168,9 @@ recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf
 recipe.hooks.objcopy.postobjcopy.1.pattern="{runtime.tools.zephyr-sketch-tool.path}/zephyr-sketch-tool" {build.zsk_args.debug} {build.zsk_args.mode-{build.link_mode}} {build.zsk_args.startup-mode-{build.boot_mode}} "{build.path}/{build.project_name}.elf"
 recipe.hooks.objcopy.postobjcopy.2.pattern="{runtime.tools.zephyr-sketch-tool.path}/zephyr-sketch-tool" {build.zsk_args.debug} {build.zsk_args.mode-{build.link_mode}} {build.zsk_args.startup-mode-{build.boot_mode}} "{build.path}/{build.project_name}.bin"
 recipe.hooks.objcopy.postobjcopy.3.pattern="{runtime.tools.zephyr-sketch-tool.path}/zephyr-sketch-tool" -ota -ota-loader "{runtime.platform.path}/firmwares/zephyr-{build.variant}.bin" -ota-sketch "{build.path}/{build.project_name}.{upload.extension}" -ota-offset {build.ota.sketch_offset} -ota-magic {build.ota.magic} -output "{build.path}/{build.project_name}"
+# Optional single image with loader and sketch, set by boards.txt
+build.combine.pattern=
+recipe.hooks.objcopy.postobjcopy.4.pattern={build.combine.pattern}
 
 ## Compute size
 recipe.size.pattern="{runtime.tools.zephyr-check-size.path}/zephyr-check-size" {build.link_mode} "{runtime.platform.path}/firmwares/zephyr-{build.variant}.config" "{build.path}/{build.project_name}.{upload.extension}" "{build.path}/{build.project_name}.elf"
@@ -279,6 +282,22 @@ tools.bossac.upload.pattern={tools.patterns.flash-loader-and-sketch}
 tools.bossac.bootloader.params.verbose=-d
 tools.bossac.bootloader.params.quiet=
 tools.bossac.bootloader.pattern={tools.patterns.flash-loader-only}
+
+#
+# BOSSA (legacy version, flashes a single combined loader+sketch image)
+#
+
+tools.bossac_legacy.path={runtime.tools.bossac-1.6.1-arduino.path}
+tools.bossac_legacy.cmd=bossac
+tools.bossac_legacy.cmd.windows=bossac.exe
+
+tools.bossac_legacy.upload.params.verbose=-d
+tools.bossac_legacy.upload.params.quiet=
+tools.bossac_legacy.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} -U {upload.native_usb} -i -e -w -v -b "{build.path}/{build.project_name}.combined.bin" -R
+
+tools.bossac_legacy.bootloader.params.verbose=-d
+tools.bossac_legacy.bootloader.params.quiet=
+tools.bossac_legacy.bootloader.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} -U {upload.native_usb} -i -e -w -v -b "{upload.artifacts.loader}" -R
 
 
 #
