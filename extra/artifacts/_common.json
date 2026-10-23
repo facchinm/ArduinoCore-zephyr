@@ -30,6 +30,11 @@
     },
     {
       "packager": "arduino",
+      "name": "bossac",
+      "version": "1.6.1-arduino"
+    },
+    {
+      "packager": "arduino",
       "name": "zephyr-sketch-tool",
       "version": "0.4.2"
     },
