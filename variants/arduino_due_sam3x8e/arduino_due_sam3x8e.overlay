@@ -47,7 +47,8 @@
                        <&pwm0 5 2040816 0>,
                        <&pwm0 4 2040816 0>;
 
-                serials = <&uart>;
+                cdc-acm-serial = <&board_cdc_acm_uart>; /* 'Serial' object is managed by SerialUSB */
+                serials = <&uart>; /* 'Serial1' onwards */
                 i2cs = <&twi1 &twi0>;
         };
 };
@@ -58,6 +59,15 @@
                          <PC23B_PWM_PWML6>,
                          <PC22B_PWM_PWML5>,
                          <PC21B_PWM_PWML4>;
+        };
+};
+
+&zephyr_udc0 {
+        status = "okay";
+
+        board_cdc_acm_uart: board_cdc_acm_uart {
+                compatible = "zephyr,cdc-acm-uart";
+                status = "okay";
         };
 };
 
