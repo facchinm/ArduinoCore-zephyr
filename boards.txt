@@ -19,6 +19,7 @@
 menu.debug=Debug
 menu.link_mode=Link mode
 menu.wait_linux_boot=Startup mode
+menu.upload_port=Upload port
 
 ##########################################################################################
 
@@ -802,19 +803,31 @@ due.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
 due.build.board=ARDUINO_DUE
 due.upload_port.0.vid=0x2341
 due.upload_port.0.pid=0x003d
+due.upload_port.1.vid=0x2341
+due.upload_port.1.pid=0x003e
 
 # The sketch is flashed together with the loader as a single image
 due.build.combine.pattern=sh -c 'cp "{runtime.platform.path}/firmwares/{bootloader.file}" "{build.path}/{build.project_name}.combined.bin" && truncate -s $(({bootloader.maximum_size})) "{build.path}/{build.project_name}.combined.bin" && cat "{build.path}/{build.project_name}.{upload.extension}" >> "{build.path}/{build.project_name}.combined.bin"'
 
-due.upload.tool=bossac_legacy
-due.upload.tool.default=bossac_legacy
+# Programming port: the 1200 bps touch makes the 16U2 erase and reset the SAM3X,
+# SAM-BA then talks over UART0. Native port: the sketch reboots into the ROM
+# SAM-BA, which enumerates as a new USB device.
+due.menu.upload_port.programming=Programming Port
+due.menu.upload_port.programming.upload.bossac_usb_port=0
+due.menu.upload_port.programming.upload.wait_for_upload_port=false
+due.menu.upload_port.programming.upload.native_usb=false
+due.menu.upload_port.native=Native USB Port
+due.menu.upload_port.native.upload.bossac_usb_port=1
+due.menu.upload_port.native.upload.wait_for_upload_port=true
+due.menu.upload_port.native.upload.native_usb=true
+
+due.upload.tool=bossac_combined
+due.upload.tool.default=bossac_combined
 due.upload.protocol=
 due.upload.transport=
 due.upload.use_1200bps_touch=true
-due.upload.wait_for_upload_port=false
-due.upload.native_usb=false
 
-due.bootloader.tool=bossac_legacy
-due.bootloader.tool.default=bossac_legacy
+due.bootloader.tool=bossac_combined
+due.bootloader.tool.default=bossac_combined
 due.bootloader.file=zephyr-{build.variant}.bin
 due.bootloader.address=0x0000

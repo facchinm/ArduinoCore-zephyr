@@ -284,20 +284,20 @@ tools.bossac.bootloader.params.quiet=
 tools.bossac.bootloader.pattern={tools.patterns.flash-loader-only}
 
 #
-# BOSSA (legacy version, flashes a single combined loader+sketch image)
+# BOSSA (flashes a single combined loader+sketch image and sets the boot-from-flash bit)
 #
 
-tools.bossac_legacy.path={runtime.tools.bossac-1.6.1-arduino.path}
-tools.bossac_legacy.cmd=bossac
-tools.bossac_legacy.cmd.windows=bossac.exe
+tools.bossac_combined.path={runtime.tools.bossac-1.9.1-arduino6.path}
+tools.bossac_combined.cmd=bossac
+tools.bossac_combined.cmd.windows=bossac.exe
 
-tools.bossac_legacy.upload.params.verbose=-d
-tools.bossac_legacy.upload.params.quiet=
-tools.bossac_legacy.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} -U {upload.native_usb} -i -e -w -v -b "{build.path}/{build.project_name}.combined.bin" -R
+tools.bossac_combined.upload.params.verbose=-d
+tools.bossac_combined.upload.params.quiet=
+tools.bossac_combined.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} -i -e -w -b "{build.path}/{build.project_name}.combined.bin" -R
 
-tools.bossac_legacy.bootloader.params.verbose=-d
-tools.bossac_legacy.bootloader.params.quiet=
-tools.bossac_legacy.bootloader.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} -U {upload.native_usb} -i -e -w -v -b "{upload.artifacts.loader}" -R
+tools.bossac_combined.bootloader.params.verbose=-d
+tools.bossac_combined.bootloader.params.quiet=
+tools.bossac_combined.bootloader.pattern="{path}/{cmd}" {bootloader.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} -i -e -w -b "{upload.artifacts.loader}" -R
 
 
 #
