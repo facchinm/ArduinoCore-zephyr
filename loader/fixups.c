@@ -16,6 +16,7 @@ void __cxa_pure_virtual() {
 }
 #endif
 
+#if defined(CONFIG_ARM_MPU)
 int disable_mpu_rasr_xn(void) {
 	uint32_t index;
 	/* Kept the max index as 8(irrespective of soc) because the sram
@@ -36,7 +37,6 @@ int disable_mpu_rasr_xn(void) {
 	return 0;
 }
 
-#if defined(CONFIG_ARM_MPU)
 SYS_INIT(disable_mpu_rasr_xn, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 #endif
 
@@ -57,8 +57,8 @@ void __attribute__((constructor)) SystemInit(void) {
 }
 #endif
 
-#if defined(CONFIG_SOC_SERIES_SAM3X)
-/* The Atmel SAM3X SoC support does not provide the CMSIS clock variable */
+#if defined(CONFIG_SOC_SERIES_SAM3X) || defined(CONFIG_SOC_SERIES_SAMD21)
+/* The Atmel SAM3X and SAMD21 SoC support does not provide the CMSIS clock variable */
 uint32_t SystemCoreClock = CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC;
 #endif
 
