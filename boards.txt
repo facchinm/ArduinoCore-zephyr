@@ -878,3 +878,49 @@ mkrzero.bootloader.tool=bossac_combined
 mkrzero.bootloader.tool.default=bossac_combined
 mkrzero.bootloader.file=zephyr-{build.variant}.bin
 mkrzero.bootloader.address=0x2000
+
+###############################################################################
+##########
+
+nano33iot.name=Arduino Nano 33 IoT
+nano33iot.build.core=arduino
+nano33iot.build.crossprefix=arm-zephyr-eabi-
+nano33iot.build.compiler_path={runtime.tools.arm-zephyr-eabi-1.0.1.path}/bin/
+
+nano33iot.menu.link_mode.static=Static
+nano33iot.menu.link_mode.static.build.link_mode=static
+nano33iot.menu.link_mode.static.upload.extension=bin-zsk.bin
+
+nano33iot.build.zephyr_target=arduino_nano_33_iot/samd21g18a
+nano33iot.build.zephyr_args=
+nano33iot.build.zephyr_hals=hal_atmel
+nano33iot.build.zephyr_toolchain=arm-zephyr-eabi
+nano33iot.build.artifact=zephyr_legacy
+nano33iot.build.variant=arduino_nano_33_iot_samd21g18a
+
+nano33iot.build.extra_flags=
+nano33iot.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
+nano33iot.build.board=ARDUINO_SAMD_NANO_33_IOT
+nano33iot.upload_port.0.vid=0x2341
+nano33iot.upload_port.0.pid=0x0057
+nano33iot.upload_port.1.vid=0x2341
+nano33iot.upload_port.1.pid=0x8057
+
+# The sketch is flashed together with the loader as a single image
+nano33iot.build.combine.pattern=sh -c 'cp "{runtime.platform.path}/firmwares/{bootloader.file}" "{build.path}/{build.project_name}.combined.bin" && truncate -s $(({bootloader.maximum_size})) "{build.path}/{build.project_name}.combined.bin" && cat "{build.path}/{build.project_name}.{upload.extension}" >> "{build.path}/{build.project_name}.combined.bin"'
+
+# The 1200 bps touch reboots into the SAM-BA bootloader, which enumerates as a
+# new USB device; the loader lives right after it.
+nano33iot.upload.tool=bossac_combined
+nano33iot.upload.tool.default=bossac_combined
+nano33iot.upload.protocol=
+nano33iot.upload.transport=
+nano33iot.upload.use_1200bps_touch=true
+nano33iot.upload.wait_for_upload_port=true
+nano33iot.upload.native_usb=true
+nano33iot.upload.bossac_usb_port=1
+
+nano33iot.bootloader.tool=bossac_combined
+nano33iot.bootloader.tool.default=bossac_combined
+nano33iot.bootloader.file=zephyr-{build.variant}.bin
+nano33iot.bootloader.address=0x2000
