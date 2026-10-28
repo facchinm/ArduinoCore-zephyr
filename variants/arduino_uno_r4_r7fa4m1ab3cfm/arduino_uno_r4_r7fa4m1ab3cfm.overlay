@@ -36,12 +36,20 @@
 
                 builtin-led-gpios = <&arduino_header 19 0>;
 
-                /* Hardware PWM: D6 D9, 490 Hz (no spare ICU event slots for the other pins) */
-                pwm-pin-gpios = <&arduino_header 12 0>,
-                                <&arduino_header 15 0>;
+                /* Hardware PWM: D3 D5 D6 D9 D10 D11, 490 Hz */
+                pwm-pin-gpios = <&arduino_header 9 0>,
+                                <&arduino_header 11 0>,
+                                <&arduino_header 12 0>,
+                                <&arduino_header 15 0>,
+                                <&arduino_header 16 0>,
+                                <&arduino_header 17 0>;
 
-                pwms = <&pwm3 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
-                       <&pwm7 1 PWM_HZ(490) PWM_POLARITY_NORMAL>;
+                pwms = <&pwm1 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm0 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm3 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm7 1 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm2 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm6 0 PWM_HZ(490) PWM_POLARITY_NORMAL>;
 
                 adc-pin-gpios = <&arduino_header 0 0>,
                                 <&arduino_header 1 0>,
@@ -91,14 +99,38 @@
                 };
         };
 
+        pwm0_default: pwm0_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 7)>;
+                };
+        };
+
+        pwm1_default: pwm1_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 5)>;
+                };
+        };
+
+        pwm2_default: pwm2_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 3)>;
+                };
+        };
+
         pwm3_default: pwm3_default {
                 group1 {
                         psels = <RA_PSEL(RA_PSEL_GPT1, 1, 11)>;
                 };
         };
+
+        pwm6_default: pwm6_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 4, 11)>;
+                };
+        };
 };
 
-/* The ICU has no spare event slots otherwise */
+/* Keep the ICU slots free for the other peripherals */
 &port_irq0 {
         status = "disabled";
 };
@@ -174,8 +206,49 @@
         };
 };
 
+/*
+ * Without PWM events or capture the GPT timers never raise interrupts, but the FSP still
+ * registers their (unlinked) IRQ numbers, so they must not overlap a real peripheral's:
+ * all the timers share the otherwise unused slots 23 and 24.
+ */
+&pwm0 {
+        pinctrl-0 = <&pwm0_default>;
+        pinctrl-names = "default";
+        interrupts = <23 1>, <24 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+&pwm1 {
+        pinctrl-0 = <&pwm1_default>;
+        pinctrl-names = "default";
+        interrupts = <23 1>, <24 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+/* GPT2-GPT7 are 16-bit timers: the 490 Hz period needs a slower clock */
+&pwm2 {
+        divider = <RA_PWM_SOURCE_DIV_4>;
+        pinctrl-0 = <&pwm2_default>;
+        pinctrl-names = "default";
+        interrupts = <23 1>, <24 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
 &pwm3 {
+        divider = <RA_PWM_SOURCE_DIV_4>;
         pinctrl-0 = <&pwm3_default>;
+        pinctrl-names = "default";
+        interrupts = <23 1>, <24 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+&pwm6 {
+        divider = <RA_PWM_SOURCE_DIV_4>;
+        pinctrl-0 = <&pwm6_default>;
         pinctrl-names = "default";
         interrupts = <23 1>, <24 1>;
         interrupt-names = "gtioca", "overflow";
@@ -184,6 +257,7 @@
 
 &pwm7 {
         divider = <RA_PWM_SOURCE_DIV_4>;
+        interrupts = <23 1>, <24 1>;
 };
 
 &code_flash {
