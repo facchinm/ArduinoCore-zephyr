@@ -924,3 +924,51 @@ nano33iot.bootloader.tool=bossac_combined
 nano33iot.bootloader.tool.default=bossac_combined
 nano33iot.bootloader.file=zephyr-{build.variant}.bin
 nano33iot.bootloader.address=0x2000
+
+###############################################################################
+##########
+
+unor4wifi.name=Arduino UNO R4 WiFi
+unor4wifi.build.core=arduino
+unor4wifi.build.crossprefix=arm-zephyr-eabi-
+unor4wifi.build.compiler_path={runtime.tools.arm-zephyr-eabi-1.0.1.path}/bin/
+
+unor4wifi.menu.link_mode.static=Static
+unor4wifi.menu.link_mode.static.build.link_mode=static
+unor4wifi.menu.link_mode.static.upload.extension=bin-zsk.bin
+
+unor4wifi.build.zephyr_target=arduino_uno_r4@wifi
+unor4wifi.build.zephyr_args=
+unor4wifi.build.zephyr_hals=hal_renesas
+unor4wifi.build.zephyr_toolchain=arm-zephyr-eabi
+unor4wifi.build.artifact=zephyr_legacy
+unor4wifi.build.variant=arduino_uno_r4_r7fa4m1ab3cfm
+
+unor4wifi.build.extra_flags=
+unor4wifi.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
+unor4wifi.build.board=ARDUINO_UNOR4_WIFI
+unor4wifi.upload_port.0.vid=0x2341
+unor4wifi.upload_port.0.pid=0x1002
+unor4wifi.upload_port.1.vid=0x2341
+unor4wifi.upload_port.1.pid=0x006D
+
+# The sketch is flashed together with the loader as a single image
+unor4wifi.build.combine.pattern=sh -c 'cp "{runtime.platform.path}/firmwares/{bootloader.file}" "{build.path}/{build.project_name}.combined.bin" && truncate -s $(({bootloader.maximum_size})) "{build.path}/{build.project_name}.combined.bin" && cat "{build.path}/{build.project_name}.{upload.extension}" >> "{build.path}/{build.project_name}.combined.bin"'
+
+# The ESP32-S3 USB bridge reboots the RA4M1 into its SAM-BA bootloader on the
+# 1200 bps touch and keeps the same serial port.
+unor4wifi.upload.tool=bossac_combined
+unor4wifi.upload.tool.default=bossac_combined
+unor4wifi.upload.protocol=
+unor4wifi.upload.transport=
+unor4wifi.upload.use_1200bps_touch=true
+unor4wifi.upload.wait_for_upload_port=false
+unor4wifi.upload.native_usb=true
+unor4wifi.upload.bossac_usb_port=1
+unor4wifi.upload.bossac_info=
+
+unor4wifi.bootloader.tool=bossac_combined
+unor4wifi.bootloader.tool.default=bossac_combined
+unor4wifi.bootloader.file=zephyr-{build.variant}.bin
+# The bootloader adds the 0x4000 application offset itself
+unor4wifi.bootloader.address=0x0000

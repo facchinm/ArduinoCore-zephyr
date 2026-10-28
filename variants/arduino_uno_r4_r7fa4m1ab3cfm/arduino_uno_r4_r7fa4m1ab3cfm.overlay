@@ -1,0 +1,230 @@
+/*
+ * Copyright (c) Arduino s.r.l. and/or its affiliated companies
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/pwm/ra_pwm.h>
+
+/ {
+        chosen {
+                zephyr,code-partition = &code_partition;
+        };
+
+        zephyr,user {
+                /* Arduino R3 header index: A0-A5 = 0-5, D0-D15 = 6-21 */
+                digital-pin-gpios = <&arduino_header 6 0>,  /* D0 */
+                                    <&arduino_header 7 0>,
+                                    <&arduino_header 8 0>,
+                                    <&arduino_header 9 0>,
+                                    <&arduino_header 10 0>,
+                                    <&arduino_header 11 0>,
+                                    <&arduino_header 12 0>,
+                                    <&arduino_header 13 0>,
+                                    <&arduino_header 14 0>,
+                                    <&arduino_header 15 0>,
+                                    <&arduino_header 16 0>,
+                                    <&arduino_header 17 0>,
+                                    <&arduino_header 18 0>,
+                                    <&arduino_header 19 0>, /* D13 / LED */
+                                    <&arduino_header 0 0>,  /* A0 */
+                                    <&arduino_header 1 0>,
+                                    <&arduino_header 2 0>,
+                                    <&arduino_header 3 0>,
+                                    <&arduino_header 4 0>,
+                                    <&arduino_header 5 0>;
+
+                builtin-led-gpios = <&arduino_header 19 0>;
+
+                /* Hardware PWM: D3 D5 D6 D9 D11, 490 Hz (no spare ICU slots left for D10) */
+                pwm-pin-gpios = <&arduino_header 9 0>,
+                                <&arduino_header 11 0>,
+                                <&arduino_header 12 0>,
+                                <&arduino_header 15 0>,
+                                <&arduino_header 17 0>;
+
+                pwms = <&pwm1 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm0 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm3 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm7 1 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm6 0 PWM_HZ(490) PWM_POLARITY_NORMAL>;
+
+                adc-pin-gpios = <&arduino_header 0 0>,
+                                <&arduino_header 1 0>,
+                                <&arduino_header 2 0>,
+                                <&arduino_header 3 0>,
+                                <&arduino_header 4 0>,
+                                <&arduino_header 5 0>;
+
+                io-channels = <&adc0 9>,
+                              <&adc0 0>,
+                              <&adc0 1>,
+                              <&adc0 2>,
+                              <&adc0 21>,
+                              <&adc0 22>;
+
+                /* No native USB: 'Serial' is the USB-C bridge (SCI9), 'Serial1' is D0/D1 */
+                serials = <&uart9>, <&uart2>;
+                i2cs = <&iic1>, <&iic0>;
+                spis = <&spi0>;
+        };
+};
+
+&pinctrl {
+        adc0_default: adc0_default {
+                group1 {
+                        /* A0-A5 */
+                        psels = <RA_PSEL(RA_PSEL_ADC, 0, 14)>,
+                                <RA_PSEL(RA_PSEL_ADC, 0, 0)>,
+                                <RA_PSEL(RA_PSEL_ADC, 0, 1)>,
+                                <RA_PSEL(RA_PSEL_ADC, 0, 2)>,
+                                <RA_PSEL(RA_PSEL_ADC, 1, 1)>,
+                                <RA_PSEL(RA_PSEL_ADC, 1, 0)>;
+                        renesas,analog-enable;
+                };
+        };
+
+        pwm0_default: pwm0_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 7)>;
+                };
+        };
+
+        pwm1_default: pwm1_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 5)>;
+                };
+        };
+
+        pwm3_default: pwm3_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 11)>;
+                };
+        };
+
+        pwm6_default: pwm6_default {
+                group1 {
+                        psels = <RA_PSEL(RA_PSEL_GPT1, 4, 11)>;
+                };
+        };
+};
+
+/* The ICU has no spare event slots otherwise */
+&port_irq0 {
+        status = "disabled";
+};
+
+&port_irq1 {
+        status = "disabled";
+};
+
+&adc0 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        channel@0 {
+                reg = <0>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+
+        channel@1 {
+                reg = <1>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+
+        channel@2 {
+                reg = <2>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+
+        channel@9 {
+                reg = <9>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+
+        channel@15 {
+                reg = <21>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+
+        channel@16 {
+                reg = <22>;
+                zephyr,gain = "ADC_GAIN_1";
+                zephyr,reference = "ADC_REF_INTERNAL";
+                zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+                zephyr,resolution = <12>;
+        };
+};
+
+&pwm0 {
+        pinctrl-0 = <&pwm0_default>;
+        pinctrl-names = "default";
+        interrupts = <4 1>, <5 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+&pwm1 {
+        pinctrl-0 = <&pwm1_default>;
+        pinctrl-names = "default";
+        interrupts = <6 1>, <7 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+&pwm3 {
+        pinctrl-0 = <&pwm3_default>;
+        pinctrl-names = "default";
+        interrupts = <23 1>, <24 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+/* 16-bit timers: the 490 Hz period needs a slower clock */
+&pwm6 {
+        divider = <RA_PWM_SOURCE_DIV_4>;
+        pinctrl-0 = <&pwm6_default>;
+        pinctrl-names = "default";
+        interrupts = <25 1>, <26 1>;
+        interrupt-names = "gtioca", "overflow";
+        status = "okay";
+};
+
+&pwm7 {
+        divider = <RA_PWM_SOURCE_DIV_4>;
+};
+
+&code_flash {
+        partitions {
+                compatible = "fixed-partitions";
+        };
+};
+
+&code_partition {
+        reg = <0x4000 0x1c000>;
+};
+
+&code_flash {
+        partitions {
+                user_sketch: partition@20000 {
+                        compatible = "zephyr,mapped-partition";
+                        label = "user";
+                        reg = <0x20000 0x20000>;
+                };
+        };
+};

@@ -62,6 +62,22 @@ void __attribute__((constructor)) SystemInit(void) {
 uint32_t SystemCoreClock = CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC;
 #endif
 
+#if defined(CONFIG_SOC_SERIES_RA4M1)
+#include <bsp_api.h>
+
+/* The bootloader leaves ICU event links that survive a software reset and hit unconnected IRQs */
+int clear_icu_event_links(void) {
+	for (int i = 0; i < BSP_ICU_VECTOR_MAX_ENTRIES; i++) {
+		R_ICU->IELSR[i] = 0;
+	}
+	NVIC->ICER[0] = 0xFFFFFFFF;
+	NVIC->ICPR[0] = 0xFFFFFFFF;
+	return 0;
+}
+
+SYS_INIT(clear_icu_event_links, EARLY, 0);
+#endif
+
 #if defined(CONFIG_BOARD_ARDUINO_NANO_CONNECT)
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
