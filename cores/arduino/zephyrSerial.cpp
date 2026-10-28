@@ -52,6 +52,7 @@ enum uart_config_data_bits conf_data_bits(uint16_t conf) {
 } // anonymous namespace
 
 void arduino::ZephyrSerial::begin(unsigned long baud, uint16_t conf) {
+	baudrate = baud;
 	struct uart_config config = {
 		.baudrate = static_cast<uint32_t>(baud),
 		.parity = conf_parity(conf),
@@ -179,9 +180,10 @@ void arduino::ZephyrSerial::flush() {
 	while (ring_buf_size_get(&tx.ringbuf) > 0) {
 		k_yield();
 	}
-	while (uart_irq_tx_complete(uart) == 0) {
-		k_yield();
-	}
+	/* IrqHandler() disables the TX interrupt once the ring is empty and some drivers only
+	 * report completion while it is enabled, so wait out the last two frames instead.
+	 */
+	k_busy_wait(2 * 12 * 1000000UL / baudrate);
 }
 
 #if DT_NODE_HAS_PROP(DT_PATH(zephyr_user), serials)

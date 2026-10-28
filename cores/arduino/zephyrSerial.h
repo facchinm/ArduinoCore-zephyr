@@ -105,6 +105,7 @@ protected:
 	static void IrqDispatch(const struct device *dev, void *data);
 
 	const struct device *uart;
+	uint32_t baudrate = 115200;
 	ZephyrSerialBuffer<CONFIG_ARDUINO_API_SERIAL_BUFFER_SIZE> tx;
 	ZephyrSerialBuffer<CONFIG_ARDUINO_API_SERIAL_BUFFER_SIZE> rx;
 };
