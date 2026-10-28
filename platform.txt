@@ -291,13 +291,17 @@ tools.bossac_combined.path={runtime.tools.bossac-1.9.1-arduino6.path}
 tools.bossac_combined.cmd=bossac
 tools.bossac_combined.cmd.windows=bossac.exe
 
+# -b sets the boot-from-flash bit on MCUs that have it (SAM3X)
+upload.bossac_boot=
+upload.bossac_info=-i
+
 tools.bossac_combined.upload.params.verbose=-d
 tools.bossac_combined.upload.params.quiet=
-tools.bossac_combined.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} -i -e -w -b "{build.path}/{build.project_name}.combined.bin" -R
+tools.bossac_combined.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} --offset={bootloader.address} {upload.bossac_info} -e -w {upload.bossac_boot} "{build.path}/{build.project_name}.combined.bin" -R
 
 tools.bossac_combined.bootloader.params.verbose=-d
 tools.bossac_combined.bootloader.params.quiet=
-tools.bossac_combined.bootloader.pattern="{path}/{cmd}" {bootloader.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} -i -e -w -b "{upload.artifacts.loader}" -R
+tools.bossac_combined.bootloader.pattern="{path}/{cmd}" {bootloader.verbose} --port={serial.port.file} --usb-port={upload.bossac_usb_port} --offset={bootloader.address} {upload.bossac_info} -e -w {upload.bossac_boot} "{upload.artifacts.loader}" -R
 
 
 #

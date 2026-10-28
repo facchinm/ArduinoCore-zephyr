@@ -826,6 +826,7 @@ due.upload.tool.default=bossac_combined
 due.upload.protocol=
 due.upload.transport=
 due.upload.use_1200bps_touch=true
+due.upload.bossac_boot=-b
 
 due.bootloader.tool=bossac_combined
 due.bootloader.tool.default=bossac_combined
