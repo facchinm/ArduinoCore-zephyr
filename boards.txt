@@ -795,7 +795,7 @@ due.build.zephyr_target=arduino_due/sam3x8e
 due.build.zephyr_args=
 due.build.zephyr_hals=hal_atmel
 due.build.zephyr_toolchain=arm-zephyr-eabi
-due.build.artifact=zephyr_main
+due.build.artifact=zephyr_legacy
 due.build.variant=arduino_due_sam3x8e
 
 due.build.extra_flags=

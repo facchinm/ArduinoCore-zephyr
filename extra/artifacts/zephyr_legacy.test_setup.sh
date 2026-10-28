@@ -1,0 +1,16 @@
+# Copyright (c) Arduino s.r.l. and/or its affiliated companies
+# SPDX-License-Identifier: Apache-2.0
+
+# This script is sourced from extra/ci_test_list.sh to provide
+# artifact-specific tests for Zephyr CI tests.
+#
+# Two helper functions are provided for easy GitHub queries:
+# - get_branch_tip <repo> <branch> [<path> ...]
+# - get_latest_release <repo> [<path> ...]
+#
+# By default, the whole project will be added to the test suite.
+# When given additional path arguments, the functions will only
+# copy artifacts under the provided paths.
+
+# Disable all core library tests on legacy boards
+skip_for_this_board libraries/

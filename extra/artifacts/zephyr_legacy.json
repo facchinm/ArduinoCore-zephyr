@@ -1,0 +1,5 @@
+{
+  "name": "Arduino Legacy Boards (Zephyr)",
+  "architecture": "zephyr_legacy",
+  "category": "Arduino"
+}

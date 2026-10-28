@@ -12,8 +12,8 @@
 # When given additional path arguments, the functions will only
 # copy artifacts under the provided paths.
 
-if [ "$ARTIFACT" == "zephyr_contrib" ] ; then
-	# Minimal safety test for Zephyr contrib boards
+if [ "$ARTIFACT" == "zephyr_contrib" ] || [ "$ARTIFACT" == "zephyr_legacy" ] ; then
+	# Minimal safety test for Zephyr contrib and legacy boards
 	get_branch_tip examples arduino/arduino-examples main \
 		examples/01.Basics/Blink
 else
