@@ -161,3 +161,44 @@
 		zephyr,input-positive = <11>;
 	};
 };
+
+/ {
+        chosen {
+                zephyr,code-partition = &code_partition;
+        };
+
+        zephyr,user {
+                cdc-acm-serial = <&board_cdc_acm_uart>; /* 'Serial' object is managed by SerialUSB */
+        };
+};
+
+&zephyr_udc0 {
+        board_cdc_acm_uart: board_cdc_acm_uart {
+                compatible = "zephyr,cdc-acm-uart";
+                status = "okay";
+        };
+};
+
+&flash0 {
+        partitions {
+                compatible = "fixed-partitions";
+        };
+};
+
+&code_partition {
+        reg = <0x2000 0x22000>;
+};
+
+&storage_partition {
+        reg = <0x3c000 0x4000>;
+};
+
+&flash0 {
+        partitions {
+                user_sketch: partition@24000 {
+                        compatible = "zephyr,mapped-partition";
+                        label = "user";
+                        reg = <0x24000 0x18000>;
+                };
+        };
+};

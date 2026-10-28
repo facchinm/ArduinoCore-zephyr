@@ -832,3 +832,49 @@ due.bootloader.tool=bossac_combined
 due.bootloader.tool.default=bossac_combined
 due.bootloader.file=zephyr-{build.variant}.bin
 due.bootloader.address=0x0000
+
+###############################################################################
+##########
+
+mkrzero.name=Arduino MKR Zero
+mkrzero.build.core=arduino
+mkrzero.build.crossprefix=arm-zephyr-eabi-
+mkrzero.build.compiler_path={runtime.tools.arm-zephyr-eabi-1.0.1.path}/bin/
+
+mkrzero.menu.link_mode.static=Static
+mkrzero.menu.link_mode.static.build.link_mode=static
+mkrzero.menu.link_mode.static.upload.extension=bin-zsk.bin
+
+mkrzero.build.zephyr_target=arduino_mkrzero/samd21g18a
+mkrzero.build.zephyr_args=
+mkrzero.build.zephyr_hals=hal_atmel
+mkrzero.build.zephyr_toolchain=arm-zephyr-eabi
+mkrzero.build.artifact=zephyr_legacy
+mkrzero.build.variant=arduino_mkrzero_samd21g18a
+
+mkrzero.build.extra_flags=
+mkrzero.build.postbuild.cmd="{tools.imgtool.path}/{tools.imgtool.cmd}" exit
+mkrzero.build.board=ARDUINO_SAMD_MKRZERO
+mkrzero.upload_port.0.vid=0x2341
+mkrzero.upload_port.0.pid=0x004f
+mkrzero.upload_port.1.vid=0x2341
+mkrzero.upload_port.1.pid=0x804f
+
+# The sketch is flashed together with the loader as a single image
+mkrzero.build.combine.pattern=sh -c 'cp "{runtime.platform.path}/firmwares/{bootloader.file}" "{build.path}/{build.project_name}.combined.bin" && truncate -s $(({bootloader.maximum_size})) "{build.path}/{build.project_name}.combined.bin" && cat "{build.path}/{build.project_name}.{upload.extension}" >> "{build.path}/{build.project_name}.combined.bin"'
+
+# The 1200 bps touch reboots into the SAM-BA bootloader, which enumerates as a
+# new USB device; the loader lives right after it.
+mkrzero.upload.tool=bossac_combined
+mkrzero.upload.tool.default=bossac_combined
+mkrzero.upload.protocol=
+mkrzero.upload.transport=
+mkrzero.upload.use_1200bps_touch=true
+mkrzero.upload.wait_for_upload_port=true
+mkrzero.upload.native_usb=true
+mkrzero.upload.bossac_usb_port=1
+
+mkrzero.bootloader.tool=bossac_combined
+mkrzero.bootloader.tool.default=bossac_combined
+mkrzero.bootloader.file=zephyr-{build.variant}.bin
+mkrzero.bootloader.address=0x2000
