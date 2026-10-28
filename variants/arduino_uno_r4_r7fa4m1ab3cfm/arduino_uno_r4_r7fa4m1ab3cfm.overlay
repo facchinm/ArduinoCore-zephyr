@@ -36,18 +36,12 @@
 
                 builtin-led-gpios = <&arduino_header 19 0>;
 
-                /* Hardware PWM: D3 D5 D6 D9 D11, 490 Hz (no spare ICU slots left for D10) */
-                pwm-pin-gpios = <&arduino_header 9 0>,
-                                <&arduino_header 11 0>,
-                                <&arduino_header 12 0>,
-                                <&arduino_header 15 0>,
-                                <&arduino_header 17 0>;
+                /* Hardware PWM: D6 D9, 490 Hz (no spare ICU event slots for the other pins) */
+                pwm-pin-gpios = <&arduino_header 12 0>,
+                                <&arduino_header 15 0>;
 
-                pwms = <&pwm1 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
-                       <&pwm0 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
-                       <&pwm3 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
-                       <&pwm7 1 PWM_HZ(490) PWM_POLARITY_NORMAL>,
-                       <&pwm6 0 PWM_HZ(490) PWM_POLARITY_NORMAL>;
+                pwms = <&pwm3 0 PWM_HZ(490) PWM_POLARITY_NORMAL>,
+                       <&pwm7 1 PWM_HZ(490) PWM_POLARITY_NORMAL>;
 
                 adc-pin-gpios = <&arduino_header 0 0>,
                                 <&arduino_header 1 0>,
@@ -63,8 +57,8 @@
                               <&adc0 21>,
                               <&adc0 22>;
 
-                /* No native USB: 'Serial' is the USB-C bridge (SCI9), 'Serial1' is D0/D1 */
-                serials = <&uart9>, <&uart2>;
+                /* No native USB: 'Serial' is the USB-C bridge (SCI9), 'Serial1' is D0/D1, 'Serial2' is the ESP32-S3 */
+                serials = <&uart9>, <&uart2>, <&uart1>;
                 i2cs = <&iic1>, <&iic0>;
                 spis = <&spi0>;
         };
@@ -84,27 +78,22 @@
                 };
         };
 
-        pwm0_default: pwm0_default {
+        sci1_default: sci1_default {
                 group1 {
-                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 7)>;
+                        /* TXD1 */
+                        psels = <RA_PSEL(RA_PSEL_SCI_1, 5, 1)>;
+                        drive-strength = "medium";
                 };
-        };
 
-        pwm1_default: pwm1_default {
-                group1 {
-                        psels = <RA_PSEL(RA_PSEL_GPT1, 1, 5)>;
+                group2 {
+                        /* RXD1 */
+                        psels = <RA_PSEL(RA_PSEL_SCI_1, 5, 2)>;
                 };
         };
 
         pwm3_default: pwm3_default {
                 group1 {
                         psels = <RA_PSEL(RA_PSEL_GPT1, 1, 11)>;
-                };
-        };
-
-        pwm6_default: pwm6_default {
-                group1 {
-                        psels = <RA_PSEL(RA_PSEL_GPT1, 4, 11)>;
                 };
         };
 };
@@ -171,36 +160,24 @@
         };
 };
 
-&pwm0 {
-        pinctrl-0 = <&pwm0_default>;
+/* On-board ESP32-S3 UART (Wi-Fi modem), 'Serial2' */
+&sci1 {
+        pinctrl-0 = <&sci1_default>;
         pinctrl-names = "default";
-        interrupts = <4 1>, <5 1>;
-        interrupt-names = "gtioca", "overflow";
+        interrupts = <4 1>, <5 1>, <6 1>, <7 1>;
+        interrupt-names = "rxi", "txi", "tei", "eri";
         status = "okay";
-};
 
-&pwm1 {
-        pinctrl-0 = <&pwm1_default>;
-        pinctrl-names = "default";
-        interrupts = <6 1>, <7 1>;
-        interrupt-names = "gtioca", "overflow";
-        status = "okay";
+        uart1: uart {
+                current-speed = <115200>;
+                status = "okay";
+        };
 };
 
 &pwm3 {
         pinctrl-0 = <&pwm3_default>;
         pinctrl-names = "default";
         interrupts = <23 1>, <24 1>;
-        interrupt-names = "gtioca", "overflow";
-        status = "okay";
-};
-
-/* 16-bit timers: the 490 Hz period needs a slower clock */
-&pwm6 {
-        divider = <RA_PWM_SOURCE_DIV_4>;
-        pinctrl-0 = <&pwm6_default>;
-        pinctrl-names = "default";
-        interrupts = <25 1>, <26 1>;
         interrupt-names = "gtioca", "overflow";
         status = "okay";
 };
