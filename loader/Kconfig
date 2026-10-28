@@ -12,6 +12,12 @@ config USB_CONFIGURATION_STRING_DESC
 
 source "Kconfig.zephyr"
 
+config LOADER_STATIC_ONLY
+        bool "Only run statically linked sketches"
+        help
+          Do not load ELF sketches at runtime, saving the LLEXT loader code.
+          The LLEXT export table is still built to generate the symbol scripts.
+
 config LLEXT_HEAP_REGION
 	string "LLEXT heap memory region"
 	depends on CODE_DATA_RELOCATION

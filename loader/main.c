@@ -300,7 +300,7 @@ static int loader(const struct shell *sh) {
 		return -EINVAL;
 	}
 
-	size_t sketch_buf_len = sketch_hdr->len;
+	__maybe_unused size_t sketch_buf_len = sketch_hdr->len;
 
 	if (sketch_hdr->flags & SKETCH_FLAG_LINKED) {
 
@@ -321,6 +321,11 @@ static int loader(const struct shell *sh) {
 		}
 	}
 
+#if defined(CONFIG_LOADER_STATIC_ONLY)
+	printk("Only statically linked sketches are supported\n");
+	recoverable_error_led();
+	return -ENOTSUP;
+#else
 #if defined(CONFIG_LLEXT_STORAGE_WRITABLE)
 	uint8_t *sketch_buf = k_aligned_alloc(4096, sketch_buf_len);
 
@@ -341,7 +346,7 @@ static int loader(const struct shell *sh) {
 	uint8_t *sketch_buf = (uint8_t *)base_addr;
 #endif
 
-#ifdef CONFIG_LLEXT
+#if defined(CONFIG_LLEXT) && !defined(CONFIG_LOADER_STATIC_ONLY)
 	struct llext_buf_loader buf_loader = LLEXT_BUF_LOADER(sketch_buf, sketch_buf_len);
 	struct llext_loader *ldr = &buf_loader.loader;
 
@@ -407,11 +412,13 @@ static int loader(const struct shell *sh) {
 	}
 #endif
 
-#ifdef CONFIG_LLEXT
+#if defined(CONFIG_LLEXT) && !defined(CONFIG_LOADER_STATIC_ONLY)
 	llext_bootstrap(ext, main_fn, NULL);
 #endif
 
 #endif
+
+#endif /* CONFIG_LOADER_STATIC_ONLY */
 
 	return 0;
 }
