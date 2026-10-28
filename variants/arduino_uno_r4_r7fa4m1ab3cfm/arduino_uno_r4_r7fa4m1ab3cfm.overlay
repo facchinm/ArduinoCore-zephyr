@@ -201,9 +201,19 @@
         status = "okay";
 
         uart1: uart {
+                zephyr,deferred-init;
+                pinctrl-0 = <&sci1_default>;
+                pinctrl-names = "default";
                 current-speed = <115200>;
                 status = "okay";
         };
+};
+
+/* Initialized by Serial1.begin(), its ICU slots are taken from the pool until Serial1.end() */
+&uart2 {
+        zephyr,deferred-init;
+        pinctrl-0 = <&sci2_default>;
+        pinctrl-names = "default";
 };
 
 /*

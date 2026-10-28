@@ -508,7 +508,9 @@ FORCE_EXPORT_SYM(can_add_rx_filter);
 
 #if defined(CONFIG_DYNAMIC_INTERRUPTS)
 EXPORT_SYMBOL(arch_irq_connect_dynamic);
+#if defined(CONFIG_SHARED_INTERRUPTS) || !defined(CONFIG_ARM)
 EXPORT_SYMBOL(arch_irq_disconnect_dynamic);
+#endif
 EXPORT_SYMBOL(k_is_in_isr);
 EXPORT_SYMBOL(k_is_preempt_thread);
 EXPORT_SYMBOL(arm_irq_enable);
